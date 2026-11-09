@@ -1,5 +1,3 @@
-# dsh-host-ops
-
 **Host-side operations for DSH agents** — workspaces, sessions, and governed configuration changes.
 Tools only: no UI, no client bundle, no direct filesystem writes.
 
