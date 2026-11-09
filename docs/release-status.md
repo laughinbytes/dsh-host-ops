@@ -18,7 +18,9 @@
 - [ ] Optional: screenshots/demo image (only affects awesome/market visibility)
 - [ ] Optional: awesome-dsh-plugin submission (repo must be ≥1 day old; low priority per plan)
 - [ ] Optional: post to DSH Discussions "Show Your Plugins" + X
-- [ ] Migrate the live profile from the local link (`@local/dsh-workbench`) to the published bundle (after npm publish; requires disabling the old bundle to avoid duplicate tools)
+- [x] Migrated the live profile to this repository via `link:` (bundle `dsh-host-ops`, row `host-ops`); old `@local/dsh-workbench` bundle removed
+- [x] Registered this directory as its own DSH workspace (`dsh-host-ops`); staging copy archived; old local plugin dir archived (backup: `/tmp/dsh-workbench-2026-11-09.tar.gz`)
+- [x] Official presentation alignment: locale en/zh value-oriented copy, icon slug-prefixed gradients, config schema enum dropdown (`approval`), English field descriptions, row id `host-ops`
 
 ## Scanner notes
 

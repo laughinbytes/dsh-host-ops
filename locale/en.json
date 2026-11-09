@@ -1,6 +1,6 @@
 {
   "meta": {
     "title": "Host Ops",
-    "description": "Host-side operations for agents: workspaces, sessions, and governed DSH configuration changes (tools only, no UI)."
+    "description": "Let the agent operate DSH itself: organize workspaces and sessions, delegate work across sessions, and change settings with preview, approval and rollback."
   }
 }

@@ -518,10 +518,12 @@ async function loadPlugin(ctx, config = {}) {
       "import z from '@deepseek-ai/schemastery'",
       'const z = {'
         + ' object: (shape) => ({ __shape: shape }),'
-        + ' string: () => ({ default: (value) => ({ __default: value }) }),'
-        + ' number: () => ({ default: (value) => ({ __default: value }) }),'
-        + ' boolean: () => ({ default: (value) => ({ __default: value }) }),'
+        + ' string: () => ({ default: (value) => ({ __default: value, description: () => ({ __default: value }) }) }),'
+        + ' number: () => ({ default: (value) => ({ __default: value, description: () => ({ __default: value }) }) }),'
+        + ' boolean: () => ({ default: (value) => ({ __default: value, description: () => ({ __default: value }) }) }),'
         + ' array: (item) => ({ default: (value) => ({ __array: item, __default: value }) }),'
+        + ' union: (items) => ({ __union: items, default: (value) => ({ __union: items, __default: value, description: () => ({ __union: items, __default: value }) }), description: () => ({ __union: items }) }),'
+        + ' const: (value) => ({ __const: value, description: () => ({ __const: value }) }),'
         + ' }',
     )
     .replace(
