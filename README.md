@@ -6,7 +6,6 @@ Tools only: no UI, no client bundle, no direct filesystem writes.
 > Unofficial community plugin for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH).
 > Not affiliated with or endorsed by DeepSeek. "DeepSeek Harness" belongs to its respective owners.
 
-[中文说明](./README.zh.md)
 
 ## Why this plugin
 
@@ -36,16 +35,24 @@ The plugin never edits `workspace.json`, session logs, or the profile patch file
 
 ## Install
 
-Install it as a profile bundle (Plugins page, or your deployment's bundle installer) with the
-package name:
+Install it as a profile bundle. Once published to npm, add it with DSH's own plugin CLI
+(use `desktop` for the Desktop app, `web` for the Web UI):
 
-```text
-dsh-host-ops
+```bash
+dsh plugin --profile desktop add dsh-host-ops
+# or, from a DSH checkout: dsh plugin --profile web add dsh-host-ops
 ```
 
-The official `@deepseek-ai/*` peer dependencies are resolved from your DSH installation —
-do not install them yourself. After enabling the bundle, the three tools appear on the next
-model request; no app restart is needed for host-only changes.
+Before the npm release, install straight from GitHub:
+
+```bash
+dsh plugin --profile desktop add "github:laughinbytes/dsh-host-ops#main"
+```
+
+You can also use the **Plugins** page: **Add plugin** installs from an npm package name or a
+Git-hosted spec. The official `@deepseek-ai/*` peer dependencies are resolved from your DSH
+installation — do not install them yourself. After enabling the bundle, the three tools
+appear on the next model request; no app restart is needed for host-only changes.
 
 For local development you can link the checkout instead of installing from npm; the package
 manifest already declares every peer dependency needed by a linked bundle.
@@ -125,18 +132,18 @@ Additional behavior:
 
 ```text
 # Organize the sidebar
-"把未分组的会话按目录归到对应工作区里，然后告诉我结果"
+"Group the ungrouped sessions under the workspaces that match their directories."
 
 # Delegate and read the answer back
-"去 session-xxx 那个会话，让它把插件测试跑一遍；跑完把结果摘要给我"
+"Go to session-xxx, ask it to run the plugin test suite, and bring me a summary when it finishes."
 
 # Change a setting with governance
-"把 session-query-sqlite 的 openAt 改成 never，先给我看预览"
+"Change session-query-sqlite openAt to never — show me the preview first."
 # (agent previews, you agree)
-"...确认，apply"
+"...confirmed, apply"
 
 # Roll one write back
-"撤销你刚才那次配置改动"
+"Revert the config change you just made."
 ```
 
 ## Configuration
@@ -215,3 +222,5 @@ docs/                   error-handling discipline, config governance, backlog
 
 Unofficial community project. DSH itself is licensed by its authors; this plugin is not
 affiliated with or endorsed by DeepSeek.
+
+Chinese translation of this file: [README.zh.md](./README.zh.md).
