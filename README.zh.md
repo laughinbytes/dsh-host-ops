@@ -43,7 +43,8 @@ dsh plugin --profile desktop add "github:laughinbytes/dsh-host-ops#main"
 | `requirePreview` | `true` | 写入必须带预览凭证 |
 | `strictErrors` | `false` | 所有降级路径直接抛错（开发/测试用） |
 
-改法两种：直接让 Agent 改（走 `dsh_config_manage`，带预览/审批/审计），或在 Plugins 页该行表单里改。
+改法：直接让 Agent 改（走 `dsh_config_manage`，带预览/审批/审计）。纯 Host 插件**在 Plugins 页没有可编辑表单**——
+那一页只有组件的启用/停用开关；要做可编辑表单需要 client 配置页，本插件有意不做。
 
 ## 安全模型
 
@@ -71,8 +72,8 @@ node scripts/verify-dsh-host-ops.mjs         # 逻辑验证（假 DSH 服务）
 node scripts/verify-dsh-host-ops-schema.mjs  # schema 验证（真实 dsh-tools）
 ```
 
-设计说明在 `docs/`。插件**故意保持纯 Host**：三个"设一次就不动"的选项，用模型工具 +
-schema 自动表单就够；再加 client 自定义设置页只会带来前端构建和首次安装重启的成本。
+设计说明在 `docs/`。插件**故意保持纯 Host**：三个"设一次就不动"的选项通过模型工具修改即可；
+再加 client 自定义设置页只会带来前端构建和首次安装重启的成本。
 
 ## 许可证
 

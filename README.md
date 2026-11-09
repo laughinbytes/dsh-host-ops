@@ -56,8 +56,10 @@ Three options, set once on the plugin row:
 | `requirePreview` | `true` | require the preview token before a write is applied |
 | `strictErrors` | `false` | throw on every degradation path (development/testing only) |
 
-Change them by asking the agent (it uses `dsh_config_manage`, with preview, approval and
-audit), or from the plugin row's form on the Plugins page.
+Change them by asking the agent: it uses `dsh_config_manage`, with preview, approval and
+audit. Host-only plugins have **no editable form on the Plugins page** — that page only shows
+the component's on/off switch (an editable form requires a client-side config page, which
+this plugin deliberately does not ship).
 
 ## Safety model
 
@@ -96,9 +98,9 @@ node scripts/verify-dsh-host-ops-schema.mjs  # schema suite (real @deepseek-ai/d
 ```
 
 Design notes live in `docs/`: error-handling discipline, config governance, release status.
-The plugin is intentionally host-only: model-facing tools plus a schema-driven form are
-enough for three set-once options; a custom client settings page would add a client bundle
-and a restart requirement for no real benefit.
+The plugin is intentionally host-only: three set-once options are edited through the agent
+tool, not through a custom settings page. Shipping a client config page would add a client
+bundle and a restart requirement (and a small front-end to maintain) for no real benefit.
 
 ## License
 
