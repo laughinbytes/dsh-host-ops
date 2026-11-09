@@ -26,3 +26,13 @@
 
 - `A5 schemastery peer` WARN is a heuristic false positive: `@deepseek-ai/schemastery` is a stable 3.x peer, no prerelease branch needed.
 - `C3b screenshots` WARN: the plugin has no UI; a demo image is optional.
+
+## Install policy for our own daily use
+
+- **Now (pre-release, active development):** `link:` to this repository — the live plugin reads
+  this repo directly, so edits + reload are instant and there is exactly one source copy.
+- **After the npm release:** switch the daily plugin to the **npm package** and update it via
+  the Plugins page. That dogfoods the artifact users actually install.
+- **While developing the next version after that:** temporarily re-link for manual verification,
+  or (preferred) verify with the two test suites plus a scratch install of the packed tarball;
+  do not leave an uncommitted/broken working tree as the daily install.
