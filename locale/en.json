@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Host Ops",
+    "description": "Host-side operations for agents: workspaces, sessions, and governed DSH configuration changes (tools only, no UI)."
+  }
+}

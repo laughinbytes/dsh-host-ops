@@ -1,0 +1,64 @@
+{
+  "name": "dsh-host-ops",
+  "version": "0.1.0",
+  "description": "Host-side operations for DSH agents: workspaces, sessions, and governed configuration changes. Tools only — no UI. Unofficial community plugin.",
+  "license": "MIT",
+  "author": "laughinbytes",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "agent",
+    "workspace",
+    "session",
+    "configuration",
+    "tools",
+    "governance"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/laughinbytes/dsh-host-ops.git"
+  },
+  "homepage": "https://github.com/laughinbytes/dsh-host-ops#readme",
+  "bugs": {
+    "url": "https://github.com/laughinbytes/dsh-host-ops/issues"
+  },
+  "icon": "./icon.svg",
+  "type": "module",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "icon.svg",
+    "locale/*.json",
+    "lib/index.js",
+    "cordis.patch.yml"
+  ],
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": "^0.2.0-rc.2",
+    "@deepseek-ai/dsh-workspace": "^0.2.0-rc.2",
+    "@deepseek-ai/schemastery": "^3.18.4"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-workspace": {
+      "optional": true
+    },
+    "@deepseek-ai/schemastery": {
+      "optional": true
+    }
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=22.19.0",
+    "dsh": ">=0.2.1-rc.2 || >=0.2.2-rc.1"
+  }
+}

@@ -1,0 +1,12 @@
+# dsh-host-ops —— 给 Agent 的 DSH 宿主侧操作能力：工作区 / 会话 / 配置治理（2026-11-02 移除了 session-router / 决策模型）。
+#
+# 只有 `insert` 会新增行：带 `id` 的顶层条目是"覆盖已有行"语义，
+# 目标 id 不存在时会被静默跳过。这里要新增，所以必须用 insert。
+#
+# dsh 自带包由安装目录解析，但**代码里 import 到的每一个都必须写进 package.json 的
+# peerDependencies**：dsh 只按 peer 键名把 linked root 里的裸包 import 改道到安装区，
+# 不声明就会 failed to import（dsh-tools / dsh-workspace / dsh-session-query 等）。
+# 写进 dependencies 没有用——registry 上没有这些包。详见 README「为什么必须声明 peerDependencies」。
+- insert:
+    - id: host-ops
+      name: 'dsh-host-ops'
