@@ -29,12 +29,10 @@
 ## 安装
 
 ```bash
-# npm 发布后
 dsh plugin --profile desktop add dsh-host-ops
-
-# npm 发布前：直接从 GitHub 安装
-dsh plugin --profile desktop add "github:laughinbytes/dsh-host-ops#main"
 ```
+
+也可以从 GitHub 安装：`dsh plugin --profile desktop add "github:laughinbytes/dsh-host-ops#main"`。
 
 `desktop` 是桌面端 profile（Web 版是 `web`）；也可以用 **Plugins → 添加插件**。
 不要自己安装 `@deepseek-ai/*`：它们是 peerDependencies，由 DSH 安装区解析。

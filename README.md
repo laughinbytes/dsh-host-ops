@@ -33,12 +33,10 @@ services (`workspaceRegistry`, `sessionController`, `sessionQuery`, `sessionTitl
 ## Install
 
 ```bash
-# after the npm release
 dsh plugin --profile desktop add dsh-host-ops
-
-# before the npm release: install straight from GitHub
-dsh plugin --profile desktop add "github:laughinbytes/dsh-host-ops#main"
 ```
+
+From GitHub instead: `dsh plugin --profile desktop add "github:laughinbytes/dsh-host-ops#main"`.
 
 `desktop` is the Desktop app profile (the Web UI profile is `web`). You can also use
 **Plugins → Add plugin**. Declare/install no `@deepseek-ai/*` packages yourself: they are
