@@ -36,3 +36,17 @@
 - **While developing the next version after that:** temporarily re-link for manual verification,
   or (preferred) verify with the two test suites plus a scratch install of the packed tarball;
   do not leave an uncommitted/broken working tree as the daily install.
+
+## Plugin page presentation (2026-11-10)
+
+The Plugins page does **not** render README: it renders the plugin's *detail document*, chosen by
+the official `dsh-plugin-detail` order — localized `locale/<lang>.json` `meta.detail` first,
+package README second. We now ship:
+
+- `docs/detail.md` (English) and `docs/detail.zh.md` (Chinese), declared via `meta.detail` in
+  `locale/en.json` / `locale/zh.json`;
+- `docs/detail-hero.svg`, a product-preview illustration referenced by both documents;
+- README/README.zh stay as the GitHub/npm developer documentation.
+
+The page is designed like official product pages: icon/title/description from locale metadata,
+a preview image, concise benefit-oriented sections, no long technical tables.
