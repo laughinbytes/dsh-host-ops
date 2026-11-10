@@ -1,37 +1,30 @@
-**Host-side operations for DSH agents** — workspaces, sessions, and governed configuration changes.
-Tools only: no product UI, no client bundle, no direct filesystem writes.
+**Let your agent operate DSH itself** — organize the workspace, delegate work across sessions,
+and change configuration with preview, approval and rollback.
 
 > Unofficial community plugin for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH).
 > Not affiliated with or endorsed by DeepSeek.
 
-## What you get
+An agent can already read files and run commands. This plugin adds the missing layer: it lets
+the agent work *inside DSH* — the same workspace, session and configuration operations a
+person has in the UI, made safe for autonomous use. Writes are governed (preview → approval →
+apply → audit → revert), and nothing is edited behind DSH's back.
 
-An agent driving DSH can read files and run commands, but it cannot normally *operate DSH
-itself*. This plugin exposes exactly that surface as three host-side tools:
+## Ask for things like
 
-- **Organize the workspace/session surface** — list, create, rename, reorder, pin, archive.
-- **Delegate across sessions** — start/send/steer/queue, then wait for a reply or a step and
-  read only the new events with a cursor.
-- **Change DSH configuration with governance** — edit the config of any editable row in the
-  current profile (DSH core rows and installed plugin rows alike); preview → approval → apply
-  → audit → revert. Fail-closed; no silent writes.
+- “Group the ungrouped sessions under the workspaces that match their directories.”
+- “Go to session-xxx, ask it to run the plugin tests, and bring me the summary when it finishes.”
+- “Change session-query-sqlite's openAt to never — show me the preview first.”
 
-All operations go through DSH's own host services (`workspaceRegistry`,
-`sessionController`, `sessionQuery`, `sessionTitle`, `agents`, `configEditor`, `approval`).
+## Three tools
 
-## Tools
-
-| Tool | What it does |
+| Tool | What the agent can do |
 | --- | --- |
-| `dsh_workspace_manage` | Sidebar project groups: list/get/create/rename/reorder/remove (remove unregisters only — files, sessions and history stay) |
-| `dsh_session_manage` | Sessions: list/get/search/read, start/send/steer/queue, wait/notify, fork/attach/rename/reorder/sort/pin/archive/cancel, cursor-based reads |
-| `dsh_config_manage` | Config of any editable row in the current profile (DSH core rows and installed plugin rows alike): list/get/set/reset/revert/history, two-step writes with preview token, approval, audit and conflict-checked rollback |
+| `dsh_workspace_manage` | Sidebar project groups: list, create, rename, reorder, remove (removing only unregisters — files, sessions and history stay) |
+| `dsh_session_manage` | Sessions: list/search/read, start, send vs steer vs queue, wait for a reply or a step, notify, fork, attach, rename, reorder, pin, archive, cancel — with cursor-based incremental reads |
+| `dsh_config_manage` | The config of any editable row in the current profile (DSH core rows and installed plugin rows alike): preview, approval, audit, revert, conflict-checked rollback |
 
-`send` delivers for the next turn (idle target starts now, running target gets it after the
-current turn); `steer` injects into the running turn; `queue` only inspects pending messages.
-Config writes require a preview token and an approval; sensitive values are masked in
-previews, receipts, approvals and history. Startup-required rows get an extra warning with
-emergency recovery steps.
+Every operation uses DSH's own host services (`workspaceRegistry`, `sessionController`,
+`sessionQuery`, `sessionTitle`, `agents`, `configEditor`, `approval`).
 
 ## Install
 
@@ -43,67 +36,58 @@ dsh plugin --profile desktop add dsh-host-ops
 dsh plugin --profile desktop add "github:laughinbytes/dsh-host-ops#main"
 ```
 
-Or use the **Plugins** page → **Add plugin**. (`desktop` is the Desktop app profile; the
-Web UI profile is `web`.) Official `@deepseek-ai/*` peer dependencies are resolved from your
-DSH installation — do not install them yourself.
+`desktop` is the Desktop app profile (the Web UI profile is `web`). You can also use
+**Plugins → Add plugin**. Official `@deepseek-ai/*` peer dependencies come from your DSH
+installation — do not install them yourself.
 
 ## Configuration
 
-Three options, set once on the plugin row:
+Three options, set once:
 
 | Option | Default | Meaning |
 | --- | --- | --- |
-| `approval` | `ask` | `ask` = every config write needs approval; `never` = config writes read-only |
-| `requirePreview` | `true` | require the preview token before a write is applied |
+| `approval` | `ask` | ask before every config write, or `never` for read-only writes |
+| `requirePreview` | `true` | require the preview token before applying a write |
 | `strictErrors` | `false` | throw on every degradation path (development/testing only) |
 
-Change them by asking the agent: it uses `dsh_config_manage`, with preview, approval and
-audit. Host-only plugins have **no editable form on the Plugins page** — that page only shows
-the component's on/off switch (an editable form requires a client-side config page, which
-this plugin deliberately does not ship).
+These are managed **by asking the agent** — it uses `dsh_config_manage` with preview,
+approval and audit. The Plugins page keeps the usual on/off switch for the plugin; there is
+no separate settings form.
 
-## Safety model
+## Safety
 
-- **Host-only**: no client half, no extra UI surface.
-- **No direct filesystem writes**: writes go through DSH host services; config writes use the
-  official config editor (atomic, locked, schema-validated).
-- **Fail-closed writes**: preview token + approval are required; a missing approval channel
-  refuses the write.
-- **Visible degradation**: optional enrichment failures say so in the tool output; core
-  failures throw actionable errors; programming errors are always rethrown.
-- **Sensitive data**: config values are masked in previews/receipts/approvals/history; the
-  plugin stores no credentials.
+- Config writes are fail-closed: preview token + approval are required, and a missing approval
+  channel refuses the write.
+- Sensitive values (keys, tokens, secrets, nested `providers[].apiKey`-style fields) are masked
+  in previews, receipts, approvals and history.
+- Changes to startup-required rows get a warning with emergency recovery steps.
+- Core failures throw actionable errors; optional enrichment degrades visibly; programming
+  errors are never swallowed.
+- The plugin creates no files and stores no credentials.
 
 ## Requirements and limits
 
-DSH `>=0.2.1-rc.2` or `>=0.2.2-rc.1` (tested against `0.2.2-rc.1`); Node `>=22.19.0`.
-Verified on macOS Desktop; other platforms are untested. Audit history is in-memory (last 100
-writes); the receipt in the tool result is the recovery fallback. Config edits cover existing
-top-level fields only.
+DSH `>=0.2.1-rc.2` or `>=0.2.2-rc.1` (tested on `0.2.2-rc.1`); Node `>=22.19.0`; verified on
+macOS Desktop — other platforms are untested. Audit history is in-memory (last 100 writes);
+the receipt in the tool result is the recovery fallback. Config edits cover existing top-level
+fields only. The plugin cannot install/enable plugins or edit agent presets; session and workspace
+operations go through DSH's normal services, and it never edits DSH's storage files directly.
 
 ## Uninstall
 
-Disable or remove the `dsh-host-ops` bundle on the **Plugins** page (or
-`dsh plugin --profile desktop remove dsh-host-ops`). The plugin creates no files and leaves
-no state behind. Config overrides made through it live in your DSH profile patch layer —
-revert them with `dsh_config_manage` (`revert`/`reset`).
+Disable or remove the `dsh-host-ops` bundle on **Plugins** (or
+`dsh plugin --profile desktop remove dsh-host-ops`). Config overrides made through it remain
+in your profile patch layer — revert them with `dsh_config_manage` (`revert`/`reset`).
 If a startup-required row was changed and DSH no longer boots: quit DSH, rename
 `~/.dsh/profiles/<profile>/cordis.patch.yml` to `.bak-<timestamp>`, start DSH again; the
 original values are in the tool receipt.
 
-## Development
+## Documentation
 
-```bash
-node scripts/verify-dsh-host-ops.mjs         # logic suite (fake DSH services)
-node scripts/verify-dsh-host-ops-schema.mjs  # schema suite (real @deepseek-ai/dsh-tools)
-```
-
-Design notes live in `docs/`: error-handling discipline, config governance, release status.
-The plugin is intentionally host-only: three set-once options are edited through the agent
-tool, not through a custom settings page. Shipping a client config page would add a client
-bundle and a restart requirement (and a small front-end to maintain) for no real benefit.
+- [Configuration governance](./docs/config-governance.md) — preview, approval, audit, revert
+- [Error-handling discipline](./docs/error-handling.md) — fail-fast vs visible degradation
+- [Development and release](./docs/development.md) — test suites, repository layout, install policy
 
 ## License
 
-[MIT](./LICENSE) © 2026 laughinbytes.
-Chinese translation: [README.zh.md](./README.zh.md).
+[MIT](./LICENSE) © 2026 laughinbytes. Chinese: [README.zh.md](./README.zh.md).

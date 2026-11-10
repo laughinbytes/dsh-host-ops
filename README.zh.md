@@ -1,27 +1,28 @@
-**给 Agent 的 DSH 宿主侧操作能力**：工作区、会话，以及带治理的配置变更。
-纯工具，无产品界面、无 client 半边、不直接写文件。
+**让 Agent 真正操作 DSH 本身**：整理工作区、跨会话派活取结果、带预览/审批/回滚地改配置。
 
 > 非官方社区插件，用于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）。
 > 与 DeepSeek 官方无隶属或背书关系。
 
-## 能力
+Agent 已经能读文件、跑命令。这个插件补上缺的那一层：让它能在 **DSH 内部**工作——
+操作工作区、会话和配置，这些本来只有人在界面上能做；同时把写入做成安全的
+（预览 → 审批 → 写入 → 审计 → 回滚），不会绕过 DSH 自己改东西。
 
-Agent 能读文件、跑命令，但通常不能操作 DSH 本身。这个插件把三类能力做成宿主侧工具：
+## 可以直接这样说
 
-- **整理工作区/会话**：列出、新建、改名、排序、置顶、归档；
-- **跨会话派活与取回**：start/send/steer/queue，用 `wait` 等回复或等一步，用 `cursor`+`after` 只读增量；
-- **配置写入治理**：可修改当前 profile 里任意可编辑行的配置（DSH 核心行与已安装插件行一样）；预览 → 审批 → 写入 → 审计 → 回滚，fail-closed，绝不静默写。
+- “把未分组的会话按目录归到对应工作区里。”
+- “去 session-xxx 让它跑一遍插件测试，跑完把结果摘要给我。”
+- “把 session-query-sqlite 的 openAt 改成 never，先给我看预览。”
+
+## 三个工具
+
+| 工具 | Agent 能做什么 |
+| --- | --- |
+| `dsh_workspace_manage` | 侧边栏工作区组：列出、新建、改名、排序、移除（移除只取消登记，不删文件/会话/历史） |
+| `dsh_session_manage` | 会话：列出/搜索/读取、新建、send/steer/queue、等待回复或步骤、提醒、fork、attach、改名、排序、置顶、归档、取消；cursor 增量读 |
+| `dsh_config_manage` | 当前 profile 里任意可编辑行的配置（DSH 核心行与已安装插件行一样）：预览、审批、审计、回滚、冲突检测 |
 
 所有操作都走 DSH 自己的宿主服务（`workspaceRegistry` / `sessionController` / `sessionQuery` /
 `sessionTitle` / `agents` / `configEditor` / `approval`）。
-
-## 工具
-
-| 工具 | 能力 |
-| --- | --- |
-| `dsh_workspace_manage` | 工作区组：list/get/create/rename/reorder/remove（remove 只取消登记，不删文件/会话/历史） |
-| `dsh_session_manage` | 会话：list/get/search/read、start/send/steer/queue、wait/notify、fork/attach/rename/reorder/sort/pin/archive/cancel、cursor 增量读 |
-| `dsh_config_manage` | 当前 profile 里任意可编辑行（含 DSH 核心行与已安装插件行）的配置：list/get/set/reset/revert/history；两步写入（预览凭证 + 审批 + 审计 + 冲突检测回滚） |
 
 ## 安装
 
@@ -33,47 +34,48 @@ dsh plugin --profile desktop add dsh-host-ops
 dsh plugin --profile desktop add "github:laughinbytes/dsh-host-ops#main"
 ```
 
-也可以用 Plugins 页的「添加插件」。（`desktop` 是桌面端 profile，Web 版是 `web`。）
+`desktop` 是桌面端 profile（Web 版是 `web`）；也可以用 **Plugins → 添加插件**。
+官方 `@deepseek-ai/*` peer 依赖由 DSH 安装区解析，不要自己装。
 
 ## 配置
 
+三个选项，设一次即可：
+
 | 配置项 | 默认 | 含义 |
 | --- | --- | --- |
-| `approval` | `ask` | `ask` = 每次写配置都要审批；`never` = 配置只读 |
+| `approval` | `ask` | 每次写配置都要审批；`never` 表示配置只读 |
 | `requirePreview` | `true` | 写入必须带预览凭证 |
 | `strictErrors` | `false` | 所有降级路径直接抛错（开发/测试用） |
 
-改法：直接让 Agent 改（走 `dsh_config_manage`，带预览/审批/审计）。纯 Host 插件**在 Plugins 页没有可编辑表单**——
-那一页只有组件的启用/停用开关；要做可编辑表单需要 client 配置页，本插件有意不做。
+**改法：直接让 Agent 改**（走 `dsh_config_manage`，带预览/审批/审计）。Plugins 页保留
+常规的启用/停用开关，没有单独的设置表单。
 
-## 安全模型
+## 安全
 
-纯 Host 半边；不直接写文件，配置写入走官方通道（校验、文件锁、原子替换）；写入必须
-预览 + 审批（没有审批通道即拒绝）；可选信息降级时在输出里写明，核心失败抛可行动错误；
-预览/收据/审批/审计里敏感字段掩码（含 `providers[].apiKey`）。
+- 配置写入 fail-closed：必须有预览凭证 + 审批；没有审批通道就拒绝写入；
+- 敏感值（key/token/secret、`providers[].apiKey` 这类嵌套字段）在预览/收据/审批/审计里掩码；
+- 改启动必需行会给出警告与应急恢复步骤；
+- 核心失败抛出可行动错误；可选信息降级时明确告知；编程错误绝不吞掉；
+- 插件不创建文件、不存储凭据。
 
 ## 要求与限制
 
-DSH `>=0.2.1-rc.2` 或 `>=0.2.2-rc.1`（在 `0.2.2-rc.1` 验证）；Node `>=22.19.0`。
-仅在 macOS Desktop 实测，其他平台未验证。审计是内存环形（最近 100 条），收据是恢复兜底；
-只支持改已存在行的顶层字段。
+DSH `>=0.2.1-rc.2` 或 `>=0.2.2-rc.1`（在 `0.2.2-rc.1` 验证）；Node `>=22.19.0`；仅在
+macOS Desktop 实测，其他平台未验证。审计是内存环形（最近 100 条），收据是恢复兜底；
+只支持改已存在行的顶层字段；不能安装/启用插件、不能改 agent preset；会话与工作区操作都走 DSH 自己的服务，不直接改 DSH 的存储文件。
 
 ## 卸载
 
-在 Plugins 页禁用/移除 `dsh-host-ops`（或 `dsh plugin --profile desktop remove dsh-host-ops`）。
-插件不创建文件、不残留状态。配置改动在 profile patch 层，用 `dsh_config_manage` 的
-`revert`/`reset` 撤销。若改坏启动必需行导致 DSH 起不来：退出 DSH，把
-`~/.dsh/profiles/<profile>/cordis.patch.yml` 改名成 `.bak-<时间>`，再启动。
+在 **Plugins** 页禁用/移除 `dsh-host-ops`（或 `dsh plugin --profile desktop remove dsh-host-ops`）。
+通过它做的配置改动会留在 profile patch 层，用 `dsh_config_manage` 的 `revert`/`reset` 撤销。
+若改坏启动必需行导致 DSH 起不来：退出 DSH，把 `~/.dsh/profiles/<profile>/cordis.patch.yml`
+改名成 `.bak-<时间>`，再启动；原始值在工具收据里。
 
-## 开发
+## 文档
 
-```bash
-node scripts/verify-dsh-host-ops.mjs         # 逻辑验证（假 DSH 服务）
-node scripts/verify-dsh-host-ops-schema.mjs  # schema 验证（真实 dsh-tools）
-```
-
-设计说明在 `docs/`。插件**故意保持纯 Host**：三个"设一次就不动"的选项通过模型工具修改即可；
-再加 client 自定义设置页只会带来前端构建和首次安装重启的成本。
+- [配置治理](./docs/config-governance.md) — 预览、审批、审计、回滚
+- [错误处理纪律](./docs/error-handling.md) — fail-fast 与可见降级
+- [开发与发布](./docs/development.md) — 测试、仓库结构、日常安装策略
 
 ## 许可证
 
