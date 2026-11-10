@@ -60,5 +60,6 @@ a preview image, concise benefit-oriented sections, no long technical tables.
   `lib/index.js` passes `node --check`.
 - **Daily-use switch**: the Desktop profile now installs `dsh-host-ops@0.1.0` from npm (the
   previous `link:` install was removed); tools verified working.
-- **Placeholder cleanup pending**: npm created `0.0.0-stage` (temporary placeholder during
-  publishing). Removing it needs a 2FA OTP: `npm unpublish dsh-host-ops@0.0.0-stage --otp=<code>`.
+- **Placeholder cleaned**: the temporary `0.0.0-stage` version was unpublished; the registry now
+  lists only `0.1.0` (its `latest`). A historical timestamp entry for the placeholder remains in
+  npm's metadata `time` map, which is normal and harmless.
