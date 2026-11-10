@@ -36,7 +36,8 @@
     "lib/index.js",
     "cordis.patch.yml",
     "docs/detail.md",
-    "docs/detail.zh.md"
+    "docs/detail.zh.md",
+    "docs/detail-hero.svg"
   ],
   "peerDependencies": {
     "@deepseek-ai/dsh-tools": "^0.2.0-rc.2",
