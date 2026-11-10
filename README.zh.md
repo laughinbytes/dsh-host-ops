@@ -64,6 +64,11 @@ DSH `>=0.2.1-rc.2` 或 `>=0.2.2-rc.1`（在 `0.2.2-rc.1` 验证）；Node `>=22.
 macOS Desktop 实测，其他平台未验证。审计是内存环形（最近 100 条），收据是恢复兜底；
 只支持改已存在行的顶层字段；不能安装/启用插件、不能改 agent preset；会话与工作区操作都走 DSH 自己的服务，不直接改 DSH 的存储文件。
 
+## 验证
+
+安装后让 Agent“列一下我的工作区”，三个工具应能正常返回。在仓库里也可以运行两套测试
+（见文档）。
+
 ## 卸载
 
 在 **Plugins** 页禁用/移除 `dsh-host-ops`（或 `dsh plugin --profile desktop remove dsh-host-ops`）。

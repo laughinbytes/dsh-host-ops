@@ -73,6 +73,11 @@ the receipt in the tool result is the recovery fallback. Config edits cover exis
 fields only. The plugin cannot install/enable plugins or edit agent presets; session and workspace
 operations go through DSH's normal services, and it never edits DSH's storage files directly.
 
+## Verify
+
+After installing, ask the agent “list my workspaces” — the three tools should answer without
+errors. In a checkout you can also run the two test suites (see Documentation).
+
 ## Uninstall
 
 Disable or remove the `dsh-host-ops` bundle on **Plugins** (or
