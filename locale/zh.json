@@ -1,6 +1,7 @@
 {
   "meta": {
     "title": "宿主操作台",
-    "description": "让 Agent 操作 DSH 本身：整理工作区与会话、跨会话派活取结果、带审批与回滚地改配置。"
+    "description": "让 Agent 操作 DSH 本身：整理工作区与会话、跨会话派活取结果、带审批与回滚地改配置。",
+    "detail": "docs/detail.zh.md"
   }
 }

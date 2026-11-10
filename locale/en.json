@@ -1,6 +1,7 @@
 {
   "meta": {
     "title": "Host Ops",
-    "description": "Let the agent operate DSH itself: organize workspaces and sessions, delegate work across sessions, and change settings with preview, approval and rollback."
+    "description": "Let the agent operate DSH itself: organize workspaces and sessions, delegate work across sessions, and change settings with preview, approval and rollback.",
+    "detail": "docs/detail.md"
   }
 }

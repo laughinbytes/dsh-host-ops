@@ -34,7 +34,9 @@
     "icon.svg",
     "locale/*.json",
     "lib/index.js",
-    "cordis.patch.yml"
+    "cordis.patch.yml",
+    "docs/detail.md",
+    "docs/detail.zh.md"
   ],
   "peerDependencies": {
     "@deepseek-ai/dsh-tools": "^0.2.0-rc.2",
