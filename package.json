@@ -1,7 +1,7 @@
 {
   "name": "dsh-host-ops",
   "version": "0.1.0",
-  "description": "Host-side operations for DSH agents: workspaces, sessions, and governed configuration changes. Tools only — no UI. Unofficial community plugin.",
+  "description": "Host-side operations for DSH agents: workspaces, sessions, and governed configuration changes. Tools only — no UI.",
   "license": "MIT",
   "author": "laughinbytes",
   "keywords": [

@@ -1,8 +1,7 @@
 **Host-side DSH tools for agents** — workspaces, sessions, and configuration, with preview,
 approval, audit and revert for writes.
 
-> Unofficial community plugin for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH).
-> Not affiliated with or endorsed by DeepSeek.
+For [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) (DSH).
 
 This is the developer-facing README. The page users see inside DSH is generated from the
 localized detail documents in [`docs/detail.md`](./docs/detail.md) /

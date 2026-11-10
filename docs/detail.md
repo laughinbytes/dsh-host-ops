@@ -27,4 +27,3 @@ those controls, and puts a review step in front of the risky ones.
 - The switch on this page turns the plugin on or off. Advanced options (`approval`,
   `requirePreview`, `strictErrors`) are changed by asking the agent — there is nothing to set
   up first.
-- Unofficial community plugin; not affiliated with DeepSeek.

@@ -24,4 +24,3 @@ Agent 能读文件、跑命令，但用不了 DSH 本身。这个插件把 DSH �
 - 适用于 DSH `>=0.2.1-rc.2` 或 `>=0.2.2-rc.1`。
 - 本页的开关用于启用/停用插件。三个高级选项（`approval`、`requirePreview`、
   `strictErrors`）让 Agent 改即可，不需要预先配置。
-- 非官方社区插件，与 DeepSeek 无隶属关系。

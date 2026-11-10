@@ -1,7 +1,6 @@
 **给 Agent 的 DSH 宿主侧工具** — 工作区、会话与配置操作；写入带预览、审批、审计与回滚。
 
-> 非官方社区插件，用于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）。
-> 与 DeepSeek 官方无隶属或背书关系。
+用于 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（DSH）。
 
 本文件是**面向开发者**的 README。用户在 DSH 内看到的插件页，是由官方 `meta.detail` 机制
 读取 [`docs/detail.zh.md`](./docs/detail.zh.md)（英文为 [`docs/detail.md`](./docs/detail.md)）
