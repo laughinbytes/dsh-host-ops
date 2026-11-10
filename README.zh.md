@@ -10,7 +10,7 @@ Agent 能读文件、跑命令，但通常不能操作 DSH 本身。这个插件
 
 - **整理工作区/会话**：列出、新建、改名、排序、置顶、归档；
 - **跨会话派活与取回**：start/send/steer/queue，用 `wait` 等回复或等一步，用 `cursor`+`after` 只读增量；
-- **配置写入治理**：预览 → 审批 → 写入 → 审计 → 回滚，fail-closed，绝不静默写。
+- **配置写入治理**：可修改当前 profile 里任意可编辑行的配置（DSH 核心行与已安装插件行一样）；预览 → 审批 → 写入 → 审计 → 回滚，fail-closed，绝不静默写。
 
 所有操作都走 DSH 自己的宿主服务（`workspaceRegistry` / `sessionController` / `sessionQuery` /
 `sessionTitle` / `agents` / `configEditor` / `approval`）。
@@ -21,7 +21,7 @@ Agent 能读文件、跑命令，但通常不能操作 DSH 本身。这个插件
 | --- | --- |
 | `dsh_workspace_manage` | 工作区组：list/get/create/rename/reorder/remove（remove 只取消登记，不删文件/会话/历史） |
 | `dsh_session_manage` | 会话：list/get/search/read、start/send/steer/queue、wait/notify、fork/attach/rename/reorder/sort/pin/archive/cancel、cursor 增量读 |
-| `dsh_config_manage` | DSH 配置：list/get/set/reset/revert/history；两步写入（预览凭证 + 审批 + 审计 + 冲突检测回滚） |
+| `dsh_config_manage` | 当前 profile 里任意可编辑行（含 DSH 核心行与已安装插件行）的配置：list/get/set/reset/revert/history；两步写入（预览凭证 + 审批 + 审计 + 冲突检测回滚） |
 
 ## 安装
 
@@ -55,8 +55,8 @@ dsh plugin --profile desktop add "github:laughinbytes/dsh-host-ops#main"
 ## 要求与限制
 
 DSH `>=0.2.1-rc.2` 或 `>=0.2.2-rc.1`（在 `0.2.2-rc.1` 验证）；Node `>=22.19.0`。
-审计是内存环形（最近 100 条），收据是恢复兜底；只支持改已存在行的顶层字段；
-**故意不做自定义设置页**（见下方设计说明）。
+仅在 macOS Desktop 实测，其他平台未验证。审计是内存环形（最近 100 条），收据是恢复兜底；
+只支持改已存在行的顶层字段。
 
 ## 卸载
 

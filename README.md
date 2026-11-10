@@ -12,8 +12,9 @@ itself*. This plugin exposes exactly that surface as three host-side tools:
 - **Organize the workspace/session surface** — list, create, rename, reorder, pin, archive.
 - **Delegate across sessions** — start/send/steer/queue, then wait for a reply or a step and
   read only the new events with a cursor.
-- **Change DSH configuration with governance** — preview → approval → apply → audit →
-  revert. Fail-closed; no silent writes.
+- **Change DSH configuration with governance** — edit the config of any editable row in the
+  current profile (DSH core rows and installed plugin rows alike); preview → approval → apply
+  → audit → revert. Fail-closed; no silent writes.
 
 All operations go through DSH's own host services (`workspaceRegistry`,
 `sessionController`, `sessionQuery`, `sessionTitle`, `agents`, `configEditor`, `approval`).
@@ -24,7 +25,7 @@ All operations go through DSH's own host services (`workspaceRegistry`,
 | --- | --- |
 | `dsh_workspace_manage` | Sidebar project groups: list/get/create/rename/reorder/remove (remove unregisters only — files, sessions and history stay) |
 | `dsh_session_manage` | Sessions: list/get/search/read, start/send/steer/queue, wait/notify, fork/attach/rename/reorder/sort/pin/archive/cancel, cursor-based reads |
-| `dsh_config_manage` | DSH configuration: list/get/set/reset/revert/history, two-step writes with preview token, approval, audit and conflict-checked rollback |
+| `dsh_config_manage` | Config of any editable row in the current profile (DSH core rows and installed plugin rows alike): list/get/set/reset/revert/history, two-step writes with preview token, approval, audit and conflict-checked rollback |
 
 `send` delivers for the next turn (idle target starts now, running target gets it after the
 current turn); `steer` injects into the running turn; `queue` only inspects pending messages.
@@ -75,17 +76,17 @@ this plugin deliberately does not ship).
 
 ## Requirements and limits
 
-DSH `>=0.2.1-rc.2` or `>=0.2.2-rc.1` (tested against `0.2.2-rc.1`); Node `>=22.19.0`;
-macOS/Linux Desktop and headless DSH. Audit history is in-memory (last 100 writes); the
-receipt in the tool result is the recovery fallback. Config edits cover existing top-level
-fields only. No custom settings page on purpose (see Design notes below).
+DSH `>=0.2.1-rc.2` or `>=0.2.2-rc.1` (tested against `0.2.2-rc.1`); Node `>=22.19.0`.
+Verified on macOS Desktop; other platforms are untested. Audit history is in-memory (last 100
+writes); the receipt in the tool result is the recovery fallback. Config edits cover existing
+top-level fields only.
 
 ## Uninstall
 
 Disable or remove the `dsh-host-ops` bundle on the **Plugins** page (or
 `dsh plugin --profile desktop remove dsh-host-ops`). The plugin creates no files and leaves
 no state behind. Config overrides made through it live in your DSH profile patch layer —
-revert them with `dsh_config_manage` (`revert`/`reset`) or remove the override in Settings.
+revert them with `dsh_config_manage` (`revert`/`reset`).
 If a startup-required row was changed and DSH no longer boots: quit DSH, rename
 `~/.dsh/profiles/<profile>/cordis.patch.yml` to `.bak-<timestamp>`, start DSH again; the
 original values are in the tool receipt.
