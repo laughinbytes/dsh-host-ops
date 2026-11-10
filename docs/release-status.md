@@ -50,3 +50,15 @@ package README second. We now ship:
 
 The page is designed like official product pages: icon/title/description from locale metadata,
 a preview image, concise benefit-oriented sections, no long technical tables.
+
+## Published (2026-11-10)
+
+- **npm**: `dsh-host-ops@0.1.0` published; `latest` = 0.1.0. Integrity
+  `sha512-GmWg7aMoHtBPCg3dnmmsv5Fkg91DNlSe0f0c6bmbgjaDMh/ZcVMFRLWSp2pzu+GvNvuM00R9lLm09jVIleB9WA==`.
+- **Git tag**: `v0.1.0` on commit `9e0528e` (pushed).
+- **Clean install verified**: `npm install dsh-host-ops@0.1.0` in an empty directory → 12 files,
+  `lib/index.js` passes `node --check`.
+- **Daily-use switch**: the Desktop profile now installs `dsh-host-ops@0.1.0` from npm (the
+  previous `link:` install was removed); tools verified working.
+- **Placeholder cleanup pending**: npm created `0.0.0-stage` (temporary placeholder during
+  publishing). Removing it needs a 2FA OTP: `npm unpublish dsh-host-ops@0.0.0-stage --otp=<code>`.
