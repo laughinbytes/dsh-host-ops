@@ -104,6 +104,8 @@ values are in the tool receipt.
 Repository layout, install policy for daily use and release scanning:
 [`docs/development.md`](./docs/development.md).
 
+Plugin spec source: `dsh-dev/docs/spec-matrix.md` (DSH 0.2.2-rc.3). Run `npm test` before committing.
+
 ## License
 
 [MIT](./LICENSE) © 2026 laughinbytes. Chinese: [README.zh.md](./README.zh.md).

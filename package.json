@@ -25,6 +25,11 @@
   },
   "icon": "./icon.svg",
   "type": "module",
+  "scripts": {
+    "test": "npm run test:compliance",
+    "test:compliance": "node scripts/check-plugin-compliance.mjs --root . --strict",
+    "test:host": "node scripts/verify-dsh-host-ops.mjs && node scripts/verify-dsh-host-ops-schema.mjs"
+  },
   "exports": {
     ".": "./lib/index.js",
     "./package.json": "./package.json",

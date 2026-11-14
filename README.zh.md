@@ -88,6 +88,8 @@ node scripts/verify-dsh-host-ops-schema.mjs  # schema 验证（真实 dsh-tools�
 
 仓库结构、日常安装策略与发布扫描见 [`docs/development.md`](./docs/development.md)。
 
+插件规范来源：`dsh-dev/docs/spec-matrix.md`（DSH 0.2.2-rc.3）；提交前跑 `npm test`。
+
 ## 许可证
 
 [MIT](./LICENSE) © 2026 laughinbytes。英文版：[README.md](./README.md)。
