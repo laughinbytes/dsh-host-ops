@@ -1,6 +1,6 @@
 {
   "name": "dsh-host-ops",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Host-side operations for DSH agents: workspaces, sessions, and governed configuration changes. Tools only — no UI.",
   "license": "MIT",
   "author": "laughinbytes",
@@ -36,6 +36,7 @@
     "./locale/*.json": "./locale/*.json"
   },
   "files": [
+    "CHANGELOG.md",
     "icon.svg",
     "locale/*.json",
     "lib/index.js",
