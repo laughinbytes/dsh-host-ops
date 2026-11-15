@@ -1,8 +1,47 @@
 # Release status (2026-11-09)
 
-> **2026-11-15 status:** npm `latest` is **0.1.2** (published 18:16 local; `next` also points
-> at 0.1.2). Git tag `v0.1.1` was skipped on npm. The daily Desktop profile was switched to
-> 0.1.2 through `plugin_manager` (remove → install).
+> **2026-11-15 status:** npm `next` is **0.2.0** (published 19:16 local); `latest` is still
+> **0.1.2** until the dist-tag is promoted. The daily Desktop profile is on **0.2.0** and passed
+> the read/refusal dogfood. Git tag `v0.2.0` is pushed.
+
+## 0.2.0 (next published, 2026-11-15)
+
+Behavior release published under `next`; `latest` promotion pending.
+
+- [x] **Sensitive config writes refused**: schema-first detection (`meta.role: "secret"`),
+      `credential-ref` (e.g. `apiKeyEnv`) explicitly allowed, and a narrow field-name fallback
+      when the schema has no role. `set`/`reset`/`revert` reject additions/changes, including
+      inherited values pinned by a complete override; removal/unchanged values are allowed.
+- [x] **`get` masks sensitive values**: `effective`/`override`/`inherited` are masked by the
+      same schema+name resolver, so raw secrets no longer enter a tool result. The live
+      `cordis_inspect_query` schema exposes `x-cordis.role` (`secret` / `credential-ref`) and
+      the runtime schemastery schema exposes the same `meta.role` (verified on
+      `dsh-web-search-deepseek`).
+- [x] **Optional-service policy documented**: required services stay in `inject`; the other
+      seven remain guarded `ctx.get` lookups; recorded as a reviewed exception in
+      [`development.md`](./development.md#reviewed-policy-decisions).
+- [x] `npm test`: 413/413 logic, 64/64 schema, A=0/B=0/C=2, presentation/meta pass,
+      standards lock pass.
+- [x] Version bump: `0.2.0`; CHANGELOG/README/tool page updated; tarball
+      `dsh-host-ops-0.2.0.tgz` (13 files, 74 kB).
+- [x] G1: clean `npm install` of the 0.2.0 tarball in an empty directory; `node --check` OK.
+- [x] G2 (composition): installed the 0.2.0 tarball into an isolated staging profile
+      (`DSH_HOME=/tmp/host-ops-staging-home`, created from the shipped `web` template);
+      `dsh --profile staging --dump-config` shows the `host-ops` row and the profile registers
+      `dsh-host-ops` from the tarball. Full runtime core-flow was not executed in staging
+      because the isolated home has no model credentials.
+- [x] G1.5: **N/A** — no new plugin-written startup document; config writes still use the
+      official `configEditor.edit()`.
+- [x] G2.5: same DSH `0.2.2-rc.3`; the 0.2.2-rc.1 → rc.3 review/ack still applies.
+- [x] Publish `--tag next`: `dsh-host-ops@0.2.0`, integrity
+      `sha512-K7Ak4ZnJsqJiXvktwFrBefWQusMkk5+YCKdy12mJ4JIuzMqSLAnUVMFfJMjt4xs8FZRVSqnCpMZVVjlWGuzp1g==`.
+- [x] Registry install: clean `npm install dsh-host-ops@0.2.0`; version and `node --check` OK.
+- [x] Daily profile: 0.1.2 → 0.2.0 via `plugin_manager`; profile dependency is 0.2.0.
+- [x] Daily dogfood (read-only): `get` shows the new “敏感字段已掩码” output; `set apiKey` is
+      refused with `拒绝写入敏感字段：apiKey`; `set apiKeyEnv` previews normally; a normal
+      `host-ops` preview still works. No `apply: true` was used.
+- [x] Git tag `v0.2.0` on `13cd3be`, pushed.
+- [ ] Promote `latest`: `npm dist-tag add dsh-host-ops@0.2.0 latest` (2FA).
 
 ## 0.1.2 (published, 2026-11-15)
 
@@ -38,38 +77,6 @@
 - [x] Git commit `04db302` + annotated tag `v0.1.2`, pushed to `origin/main`.
 - [ ] Rollback command if 0.1.2 misbehaves: remove `dsh-host-ops`, install
       `dsh-host-ops@0.1.0` via `plugin_manager`.
-
-## 0.2.0 (prepared, 2026-11-15)
-
-Policy decisions agreed with the user; not published yet.
-
-- [x] **Sensitive config writes refused**: schema-first detection (`meta.role: "secret"`),
-      `credential-ref` (e.g. `apiKeyEnv`) explicitly allowed, and a narrow field-name fallback
-      when the schema has no role. `set`/`reset`/`revert` reject additions/changes, including
-      inherited values pinned by a complete override; removal/unchanged values are allowed.
-- [x] **`get` masks sensitive values**: `effective`/`override`/`inherited` are masked by the
-      same schema+name resolver, so raw secrets no longer enter a tool result. The live
-      `cordis_inspect_query` schema exposes `x-cordis.role` (`secret` / `credential-ref`) and
-      the runtime schemastery schema exposes the same `meta.role` (verified on
-      `dsh-web-search-deepseek`).
-- [x] **Optional-service policy documented**: required services stay in `inject`; the other
-      seven remain guarded `ctx.get` lookups; recorded as a reviewed exception in
-      [`development.md`](./development.md#reviewed-policy-decisions).
-- [x] `npm test`: 413/413 logic, 64/64 schema, A=0/B=0/C=2, presentation/meta pass,
-      standards lock pass.
-- [x] Version bump: `0.2.0`; CHANGELOG/README/tool page updated; tarball
-      `dsh-host-ops-0.2.0.tgz` (13 files, 74 kB).
-- [x] G1: clean `npm install` of the 0.2.0 tarball in an empty directory; `node --check` OK.
-- [x] G2 (composition): installed the 0.2.0 tarball into an isolated staging profile
-      (`DSH_HOME=/tmp/host-ops-staging-home`, created from the shipped `web` template);
-      `dsh --profile staging --dump-config` shows the `host-ops` row and the profile registers
-      `dsh-host-ops` from the tarball. Full runtime core-flow was not executed in staging
-      because the isolated home has no model credentials.
-- [x] G1.5: **N/A** — no new plugin-written startup document; config writes still use the
-      official `configEditor.edit()`.
-- [x] G2.5: same DSH `0.2.2-rc.3`; the 0.2.2-rc.1 → rc.3 review/ack still applies.
-- [ ] Publish `--tag next`, promote `latest`, switch daily profile, and run the core-flow
-      dogfood. 2FA is required for publishing.
 
 ## Done
 
