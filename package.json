@@ -29,7 +29,7 @@
     "test": "npm run test:host && npm run test:compliance && npm run test:presentation && npm run check:standards",
     "test:compliance": "node scripts/check-plugin-compliance.mjs --root . --strict",
     "test:host": "node scripts/verify-dsh-host-ops.mjs && node scripts/verify-dsh-host-ops-schema.mjs",
-    "test:presentation": "node scripts/audit-plugin-presentation.mjs --root . && node scripts/verify-plugin-meta.mjs --root .",
+    "test:presentation": "node scripts/verify-presentation.mjs && node scripts/verify-plugin-meta.mjs --root .",
     "check:standards": "node scripts/check-standards.mjs",
     "sync:standards": "node scripts/sync-standards.mjs"
   },

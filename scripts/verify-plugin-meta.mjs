@@ -78,7 +78,6 @@ const CANONICAL_DIRS = new Set([
   'dsh-attention-center',
   'dsh-balance-hud',
   'dsh-privacy-guard',
-  'dsh-agentic-tool-catalog',
   'dsh-google-workspace',
   'dsh-channels',
 ])

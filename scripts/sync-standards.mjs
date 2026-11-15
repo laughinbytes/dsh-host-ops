@@ -34,7 +34,6 @@ const DEFAULT_SOURCE = path.join(os.homedir(), 'Documents', 'deepseek-harness', 
 /** Files copied verbatim from dsh-dev. Fixtures are discovered below. */
 const FIXED_FILES = [
   'scripts/check-plugin-compliance.mjs',
-  'scripts/audit-plugin-presentation.mjs',
   'scripts/verify-plugin-meta.mjs',
 ]
 

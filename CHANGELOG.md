@@ -3,6 +3,16 @@
 All notable changes to `dsh-host-ops` are documented here. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+
+- **Presentation identity is repo-owned** — removed the vendored dsh-dev
+  `audit-plugin-presentation.mjs` and its canonical-table dependency; added
+  `scripts/verify-presentation.mjs` and kept the generic `verify-plugin-meta.mjs`. `npm test`
+  now checks this repository's own package/locale/icon/detail identity. dsh-dev no longer
+  registers this independently published repo in its canonical table.
+
 ## [0.2.0] — 2026-11-15
 
 Behavior release: sensitive config writes are refused and read masking is unified. This is a

@@ -17,12 +17,17 @@ from the installed DSH app (macOS), so it needs DSH installed.
 
 1. the two host suites above;
 2. `check-plugin-compliance.mjs --root . --strict` (spec-matrix A/B rules);
-3. the official presentation/meta checks (`audit-plugin-presentation.mjs`,
-   `verify-plugin-meta.mjs`);
+3. the repository's own presentation check (`scripts/verify-presentation.mjs`) plus the
+   official `verify-plugin-meta.mjs` reader check;
 4. `check-standards.mjs`, which verifies the vendored checkers against
    `scripts/standards.lock.json`.
 
-The official checkers are **vendored, not hand-written**. `scripts/standards.lock.json` records
+This is an independently published repository, so it owns its display identity and is **not**
+registered in dsh-dev's canonical table. The `audit-plugin-presentation.mjs` checker is
+dsh-dev-internal; this repo uses its own `verify-presentation.mjs` plus the generic
+`verify-plugin-meta.mjs`. Only the generic checkers are vendored.
+
+The vendored checkers are **not hand-written**. `scripts/standards.lock.json` records
 the dsh-dev commit, the DSH baseline version, and the SHA-256 of every vendored file. When
 dsh-dev changes its checkers or its DSH baseline:
 

@@ -2,14 +2,13 @@
   "schema": "dsh-standards-lock/1",
   "source": {
     "repo": "dsh-dev",
-    "commit": "0b04f11b0f1aea76f7a00cb6eab1d7f62d69b92a",
+    "commit": "8844bbc22b2a4c2d38b3cb9138c9f406baa5026a",
     "dshVersion": "0.2.2-rc.3",
     "syncedAt": "2026-11-15"
   },
   "files": {
     "scripts/check-plugin-compliance.mjs": "da376e7d5610e810560593ee214e989a05944427e5f66ee2536595c650a76a0a",
-    "scripts/audit-plugin-presentation.mjs": "f40db2434611b7afbac2ebf6beb93d25bc75df50c7eef73d975501f502f06a9a",
-    "scripts/verify-plugin-meta.mjs": "d221218a087c087b8581fc609cc0f4e67c2e53af17031695397b422f11619dbd",
+    "scripts/verify-plugin-meta.mjs": "554053532ecb4a80c7c512398aae55766a896cd0a1186bd4b99d69084212f33a",
     "scripts/fixtures/compliance/credential-bare-record.js": "d5e4aa76024c577f184d857220dedc2e901a866db4bd541bfc191cfeb4318214",
     "scripts/fixtures/compliance/credential-tagged-record.js": "febefa18f6b766489b0889312e1990e26dd6468ea8f71566cad19f46b2ad7871"
   }

@@ -43,6 +43,17 @@ Behavior release: sensitive config writes are refused and read masking is unifie
 - [x] Promote `latest`: registry reports `latest` and `next` = 0.2.0; clean
       `npm install dsh-host-ops@latest` resolves 0.2.0.
 
+## Post-0.2.0 tooling (2026-11-15)
+
+- [x] Presentation identity moved into this repository: `scripts/verify-presentation.mjs`
+      checks package/locale/icon/detail; `verify-plugin-meta.mjs` remains the official reader
+      check. The dsh-dev canonical-table dependency and its `audit-plugin-presentation.mjs`
+      were removed.
+- [x] dsh-dev `docs/08` / `docs/09` no longer register independently published plugins;
+      dsh-dev commit `e90ae52` (local, not published).
+- [x] `npm test`: 413/413 logic, 64/64 schema, A=0/B=0/C=2, local presentation check,
+      official meta check, standards lock (4 files).
+
 ## 0.1.2 (published, 2026-11-15)
 
 - [x] Audit wording aligned: plugin page / READMEs / `dsh_config_manage` description now say
