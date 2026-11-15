@@ -2,7 +2,7 @@
   "schema": "dsh-standards-lock/1",
   "source": {
     "repo": "dsh-dev",
-    "commit": "8844bbc22b2a4c2d38b3cb9138c9f406baa5026a",
+    "commit": "e90ae52bae150293069f0905a3e4d43584dc7c9b",
     "dshVersion": "0.2.2-rc.3",
     "syncedAt": "2026-11-15"
   },
