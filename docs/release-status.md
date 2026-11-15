@@ -35,7 +35,7 @@
       profile dependency and lock show 0.1.2; `dsh_config_manage history` answers after the
       hot replace. pnpm logged a peer-dependency warning (the DSH peers are resolved from the
       installation, not installed as profile dependencies); no action taken.
-- [ ] Git commit / `v0.1.2` tag / push — **not done** (working tree still uncommitted).
+- [x] Git commit `04db302` + annotated tag `v0.1.2`, pushed to `origin/main`.
 - [ ] Rollback command if 0.1.2 misbehaves: remove `dsh-host-ops`, install
       `dsh-host-ops@0.1.0` via `plugin_manager`.
 
