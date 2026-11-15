@@ -89,9 +89,6 @@ const CANONICAL_PACKAGES = new Set([
   '@local/dsh-privacy-guard',
   '@local/dsh-google-workspace-bundle',
   '@local/dsh-channels',
-  '@local/browser-use',
-  '@local/computer-use',
-  '@local/dsh-exhibits',
 ])
 
 // ── 参数 ────────────────────────────────────────────────────────────────────
