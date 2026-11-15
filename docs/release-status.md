@@ -1,5 +1,44 @@
 # Release status (2026-11-09)
 
+> **2026-11-15 status:** npm `latest` is **0.1.2** (published 18:16 local; `next` also points
+> at 0.1.2). Git tag `v0.1.1` was skipped on npm. The daily Desktop profile was switched to
+> 0.1.2 through `plugin_manager` (remove → install).
+
+## 0.1.2 (published, 2026-11-15)
+
+- [x] Audit wording aligned: plugin page / READMEs / `dsh_config_manage` description now say
+      the audit is runtime-scoped and the write receipt is the cross-reload recovery path;
+      persistence deferred (backlog B1).
+- [x] Full gate: `npm test` = host logic 404/404 + schema 64/64 + compliance A=0/B=0/C=2 +
+      presentation/meta pass + standards lock pass.
+- [x] Standards provenance: `scripts/standards.lock.json` (dsh-dev `0b04f11`, DSH `0.2.2-rc.3`).
+- [x] Pack: 13 files, dev scripts/lock not included.
+- [x] Version/peer metadata: `0.1.2`; peers now `>=0.2.1-rc.2 || >=0.2.2-rc.1` (matches
+      `engines.dsh` and `0.2.2-rc.3`); README tested-version line updated.
+- [x] Tarball `dsh-host-ops-0.1.2.tgz`: 13 files, clean install in an empty directory,
+      `lib/index.js` passes `node --check`.
+- [x] G2.5 upgrade gate (0.2.2-rc.1 → 0.2.2-rc.3): 6 hits reviewed in
+      [`upgrade-review.md`](./upgrade-review.md), `--strict` passes with
+      [`upgrade-ack.json`](./upgrade-ack.json); 0 code changes.
+- [x] G1.5 cold boot: **N/A for 0.1.2** — the release adds no plugin-written startup
+      document; config writes still use the official `configEditor.edit()`. Required when the
+      persistent audit ledger (B1) lands.
+- [x] G2 staging: **waived for 0.1.2** — docs/description-only patch, host-only (no UI); the
+      only runtime delta since 0.1.0 is the 0.1.1 `ctx.sessionQuery` access fix, covered by
+      the 64-check schema suite. Do not waive for the next functional release.
+- [x] npm publish: `dsh-host-ops@0.1.2`, `next` and `latest` both point at it.
+      Integrity `sha512-D4cyvFxFc7Cf/lLhR9iuzgbYle7R7VM4k2mnYHXCEoqBf6ASOtirBNWcBWep/qr5Pe47+hPElTE/dh8sUY4szg==`,
+      shasum `cde18005db3d4eb5b00658728416c087969eb931`.
+- [x] Registry install: clean `npm install dsh-host-ops@0.1.2` succeeded after a
+      `--prefer-online` retry; installed version and peers match; `node --check` passes.
+- [x] Daily profile: 0.1.0 → 0.1.2 via `plugin_manager` (`remove_bundle` → `install_bundle`);
+      profile dependency and lock show 0.1.2; `dsh_config_manage history` answers after the
+      hot replace. pnpm logged a peer-dependency warning (the DSH peers are resolved from the
+      installation, not installed as profile dependencies); no action taken.
+- [ ] Git commit / `v0.1.2` tag / push — **not done** (working tree still uncommitted).
+- [ ] Rollback command if 0.1.2 misbehaves: remove `dsh-host-ops`, install
+      `dsh-host-ops@0.1.0` via `plugin_manager`.
+
 ## Done
 
 - [x] Public name decided: `dsh-host-ops` (npm name available; checked 2026-11-09)

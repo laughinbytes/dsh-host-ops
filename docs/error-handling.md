@@ -1,4 +1,4 @@
-# 错误处理纪律（dsh-agent-console）
+# 错误处理纪律（dsh-host-ops）
 
 > 原则：**核心功能 fail-fast；附加信息允许降级，但必须"可见 + 可观测 + 可测试 + 不吞编程错误"。**
 > 这份纪律适用于本插件全部代码；新增 catch 前先对照本文件。
@@ -45,7 +45,7 @@
 ## 5. 配置
 
 ```yaml
-- id: workbench
+- id: host-ops
   name: 'dsh-host-ops'
   config:
     strictErrors: false   # 默认 false；测试/开发可开 true：任何降级直接抛错
@@ -53,6 +53,6 @@
 
 ## 6. 测试证据
 
-- 逻辑测试：379/379（含 6 组故障注入 × 12+ 断言、编程错误重抛、strict 模式）；
+- 逻辑测试：404/404（含 6 组故障注入 × 12+ 断言、编程错误重抛、strict 模式）；
 - schema 测试：64/64；
 - 真机：正常路径 + 上一批 read/wait/cursor 验证。

@@ -1,6 +1,6 @@
 {
   "name": "dsh-host-ops",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Host-side operations for DSH agents: workspaces, sessions, and governed configuration changes. Tools only — no UI.",
   "license": "MIT",
   "author": "laughinbytes",
@@ -26,9 +26,12 @@
   "icon": "./icon.svg",
   "type": "module",
   "scripts": {
-    "test": "npm run test:compliance",
+    "test": "npm run test:host && npm run test:compliance && npm run test:presentation && npm run check:standards",
     "test:compliance": "node scripts/check-plugin-compliance.mjs --root . --strict",
-    "test:host": "node scripts/verify-dsh-host-ops.mjs && node scripts/verify-dsh-host-ops-schema.mjs"
+    "test:host": "node scripts/verify-dsh-host-ops.mjs && node scripts/verify-dsh-host-ops-schema.mjs",
+    "test:presentation": "node scripts/audit-plugin-presentation.mjs --root . && node scripts/verify-plugin-meta.mjs --root .",
+    "check:standards": "node scripts/check-standards.mjs",
+    "sync:standards": "node scripts/sync-standards.mjs"
   },
   "exports": {
     ".": "./lib/index.js",
@@ -46,8 +49,8 @@
     "docs/detail-hero.svg"
   ],
   "peerDependencies": {
-    "@deepseek-ai/dsh-tools": "^0.2.0-rc.2",
-    "@deepseek-ai/dsh-workspace": "^0.2.0-rc.2",
+    "@deepseek-ai/dsh-tools": ">=0.2.1-rc.2 || >=0.2.2-rc.1",
+    "@deepseek-ai/dsh-workspace": ">=0.2.1-rc.2 || >=0.2.2-rc.1",
     "@deepseek-ai/schemastery": "^3.18.4"
   },
   "peerDependenciesMeta": {

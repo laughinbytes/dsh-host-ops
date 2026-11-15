@@ -52,9 +52,10 @@ dsh plugin --profile desktop add dsh-host-ops
 
 - **预览凭证**：写入必须带预览返回的 token；写入时用当前状态重算，期间被改动就拒绝（TOCTOU）；
 - **审批**：`approval.request` 必须返回 `allowed-once`；没有审批通道时 fail-closed；
-- **审计**：每次成功写入都记录（最多 100 条，内存）改前/改后的覆盖值；工具结果里附带收据
-  （原始值 + 恢复步骤）；
-- **回滚**：按 `auditId` 做冲突检测回滚；字段现状不一致时拒绝并列出冲突；
+- **审计**：每次成功写入都记录（最多 100 条，仅当前运行期；插件重载后清空）改前/改后的覆盖值；
+  工具结果里附带收据（原始值（敏感字段已掩码）+ 恢复步骤）；
+- **回滚**：按 `auditId` 做冲突检测回滚（仅当前运行期）；字段现状不一致时拒绝并列出冲突；
+  重载后用收据或 `reset`；
 - **掩码**：敏感字段（key/token/secret/password/credential/env，含 `providers[].apiKey`
   这类嵌套键）在预览/收据/审批/审计里统一掩码；
 - **启动必需行**（`agent-loop`、`webserver`、`connection`、`modules` 等）会给出警告与
@@ -64,9 +65,9 @@ dsh plugin --profile desktop add dsh-host-ops
 
 ## 兼容性与限制
 
-DSH `>=0.2.1-rc.2` 或 `>=0.2.2-rc.1`（在 `0.2.2-rc.1` 验证）；Node `>=22.19.0`；仅在
-macOS Desktop 实测，其他平台未验证。审计是内存环形（最近 100 条）。配置只支持改已存在行的
-顶层字段。不能安装/启用插件、不能改 agent preset、不直接写 DSH 存储文件。
+DSH `>=0.2.1-rc.2` 或 `>=0.2.2-rc.1`（在 `0.2.2-rc.3` 验证）；Node `>=22.19.0`；仅在
+macOS Desktop 实测，其他平台未验证。审计是内存环形（最近 100 条，仅当前运行期；重载后清空）。
+配置只支持改已存在行的顶层字段。不能安装/启用插件、不能改 agent preset、不直接写 DSH 存储文件。
 
 ## 验证
 
@@ -77,10 +78,13 @@ node scripts/verify-dsh-host-ops-schema.mjs  # schema 验证（真实 dsh-tools�
 
 在已安装的 profile 里让 Agent“列一下我的工作区”，工具正常返回即端到端冒烟通过。
 
+完整本地门禁（host 两套 + 合规 + 展示 + standards）：`npm test`。
+
 ## 卸载
 
 在 **Plugins** 页禁用/移除 `dsh-host-ops`（或 `dsh plugin --profile desktop remove dsh-host-ops`）。
-通过它做的配置改动会留在 profile patch 层，用 `dsh_config_manage` 的 `revert`/`reset` 撤销。
+通过它做的配置改动会留在 profile patch 层；插件还在运行时用 `dsh_config_manage` 的
+`revert`/`reset` 撤销，重载后用 `reset` 或写入收据。
 若改坏启动必需行导致 DSH 起不来：退出 DSH，把 `~/.dsh/profiles/<profile>/cordis.patch.yml`
 改名成 `.bak-<时间>`，再启动；原始值在工具收据里。
 

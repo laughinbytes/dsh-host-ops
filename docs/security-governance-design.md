@@ -1,4 +1,4 @@
-# dsh-agent-console 安全治理层设计（config 写面）
+# dsh-host-ops 安全治理层设计（config 写面）
 
 > 目标：把「模型可编辑 DSH profile 配置」从**单次无审批写入**（当前审计 B7 最高风险）升级为**治理式写面**：
 > **预览 → 审批 → 应用 → 可回滚 → 有审计**，失败关闭。
@@ -53,11 +53,11 @@ async function requireApproval(ctx, exec, reason, displayReason) {
 - 配置项：`approval: 'ask' | 'never'`（默认 `ask`）——`never` 时所有写动作直接拒绝（headless/CI 场景的安全底线）。
 - 写动作清单：`apply`、`revert`（未来新增写动作必须登记，单测覆盖"每个写动作都过审批"）。
 
-### 2.3 审计存储
+### 2.3 审计存储（设计目标；2026-11-15 决定暂不实现）
 
-- 优先 `ctx.storageDomain`（官方持久化 seam；tool-discovery 已确认其在 0.2.2-rc.1 可用）：`<domain>/config-audit.json` 追加式记录。
-- 不可用时降级为内存环（最近 50 条），并在结果里标注 `auditPersistent: false`（不静默丢）。
-- 审计字段：`{at, action, entryId, fields: [{key, before, after}], previewToken, callId, sessionId, outcome: 'applied'|'rejected'|'reverted'|'conflict'|'failed'}`。
+- **目标形态（未实现）**：优先 `ctx.storageDomain`（官方持久化 seam；0.2.2-rc.1 已确认可用）：`<domain>/config-audit.json` 追加式记录；不可用时降级为内存环（最近 50 条），并在结果里标注 `auditPersistent: false`（不静默丢）。
+- **当前实现（0.1.x）**：内存环（最近 100 条）；插件重载/进程结束后清空；写入结果附收据（原始覆盖值 + 恢复步骤），跨进程按收据手工恢复。
+- 审计字段（目标）：`{at, action, entryId, fields: [{key, before, after}], previewToken, callId, sessionId, outcome: 'applied'|'rejected'|'reverted'|'conflict'|'failed'}`。
 - **不记录配置值以外的内容**（不落凭据；MCP env 等敏感行只在字段名层面记录，值做 mask）。
 
 ### 2.4 安全边界（写进 README）
@@ -87,7 +87,7 @@ async function requireApproval(ctx, exec, reason, displayReason) {
 |---|---|
 | approval 门 + 写动作登记 + 配置项 | 2–3 h |
 | preview/diff/previewToken + 与现有摘要合并 | 3–4 h |
-| 审计存储（storageDomain + 降级） | 2–3 h |
+| 审计存储（storageDomain + 降级） | 2–3 h（2026-11-15 决定暂缓，见 backlog B1） |
 | revert + 冲突检测 | 3–4 h |
 | 单测 4 组 + e2e 证据 | 3–4 h |
 | **合计** | **13–18 h** |

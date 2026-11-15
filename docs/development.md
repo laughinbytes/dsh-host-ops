@@ -11,13 +11,41 @@ The logic suite stubs the DSH services and the in-process event bus; the schema 
 the three tool definitions with the real `@deepseek-ai/dsh-tools`/schemastery packages extracted
 from the installed DSH app (macOS), so it needs DSH installed.
 
+## Compliance gate
+
+`npm test` is the single local gate. It runs, in order:
+
+1. the two host suites above;
+2. `check-plugin-compliance.mjs --root . --strict` (spec-matrix A/B rules);
+3. the official presentation/meta checks (`audit-plugin-presentation.mjs`,
+   `verify-plugin-meta.mjs`);
+4. `check-standards.mjs`, which verifies the vendored checkers against
+   `scripts/standards.lock.json`.
+
+The official checkers are **vendored, not hand-written**. `scripts/standards.lock.json` records
+the dsh-dev commit, the DSH baseline version, and the SHA-256 of every vendored file. When
+dsh-dev changes its checkers or its DSH baseline:
+
+```bash
+npm run sync:standards    # copy the new checkers and rewrite the lock
+git diff scripts/         # review what changed
+npm test                  # re-run everything
+```
+
+`check-standards.mjs` fails until that sync happens; do not edit the vendored checkers by hand.
+On a machine without a dsh-dev checkout (CI), it verifies the local lock only.
+
+Known advisory finding: the compliance checker reports two C-level `R-EVT-04` entries
+(`wait` and `notify` subscribe to `session/event` for one-shot side effects, not for derived
+state). A/B are the blocking levels; the C entries are reviewed and intentionally kept.
+
 ## Repository layout
 
 ```text
 lib/index.js            host-side tools (single file, no client half)
 cordis.patch.yml        bundle patch (inserts the host-ops row)
 locale/                 en/zh tool descriptions
-scripts/                the two verification suites + asar extractor helper
+scripts/                verification suites, vendored standards checkers + lock/sync helpers
 docs/                   governance, error-handling discipline, release status
 ```
 

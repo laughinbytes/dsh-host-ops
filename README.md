@@ -62,10 +62,12 @@ on/off switch.
   recomputed from current state, so changes made in between refuse the write (TOCTOU).
 - **Approval**: `approval.request` must return `allowed-once`; a missing approval channel
   fails closed.
-- **Audit**: every applied write is recorded (last 100, in memory) with the before/after
-  overrides; the tool result also contains a receipt with original values and recovery steps.
-- **Revert**: conflict-checked rollback by `auditId`; mismatched current values refuse the
-  revert and list the conflicts.
+- **Audit**: every applied write is recorded for the current runtime (last 100, in memory;
+  cleared when the plugin reloads) with the before/after overrides; the tool result also
+  contains a receipt with original values (sensitive fields masked) and recovery steps.
+- **Revert**: conflict-checked rollback by `auditId` for records from the current runtime;
+  mismatched current values refuse the revert and list the conflicts. After a reload, use
+  the receipt or `reset`.
 - **Masking**: sensitive fields (key/token/secret/password/credential/env, including nested
   keys such as `providers[].apiKey`) are masked in previews, receipts, approvals and history.
 - **Startup-required rows** (`agent-loop`, `webserver`, `connection`, `modules`, …) carry a
@@ -75,8 +77,9 @@ on/off switch.
 
 ## Compatibility and limits
 
-DSH `>=0.2.1-rc.2` or `>=0.2.2-rc.1` (tested on `0.2.2-rc.1`); Node `>=22.19.0`; verified on
-macOS Desktop, other platforms untested. Audit history is in-memory (last 100 writes). Config
+DSH `>=0.2.1-rc.2` or `>=0.2.2-rc.1` (tested on `0.2.2-rc.3`); Node `>=22.19.0`; verified on
+macOS Desktop, other platforms untested. Audit history is in-memory for the current runtime
+(last 100 writes; cleared when the plugin reloads). Config
 edits cover existing rows' top-level fields only. The plugin cannot install/enable plugin
 bundles, edit agent presets, or write DSH storage files directly.
 
@@ -90,11 +93,15 @@ node scripts/verify-dsh-host-ops-schema.mjs  # schema suite (real @deepseek-ai/d
 In an installed profile, ask the agent to “list my workspaces” — the tools answering without
 errors is the end-to-end smoke test.
 
+Full local gate (host suites + compliance + presentation + standards): `npm test`.
+
 ## Uninstall
 
 Disable or remove the `dsh-host-ops` bundle on **Plugins** (or
 `dsh plugin --profile desktop remove dsh-host-ops`). Config overrides made through the tool
-remain in the profile patch layer — revert them with `dsh_config_manage` (`revert`/`reset`).
+remain in the profile patch layer — while the plugin is still loaded, use
+`dsh_config_manage` (`revert`/`reset`); after a reload, use `reset` or the receipt from the
+write.
 If a startup-required row was changed and DSH no longer boots: quit DSH, rename
 `~/.dsh/profiles/<profile>/cordis.patch.yml` to `.bak-<timestamp>`, start DSH again; original
 values are in the tool receipt.

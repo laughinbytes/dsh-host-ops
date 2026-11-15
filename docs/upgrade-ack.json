@@ -1,0 +1,8 @@
+{
+  "0.2.2-rc.1/account-remote-provider": ["dsh-host-ops"],
+  "0.2.2-rc.1/attachment-error-codes": ["dsh-host-ops"],
+  "0.2.2-rc.1/cua-native-platform": ["dsh-host-ops"],
+  "0.2.2-rc.1/plugin-update-method": ["dsh-host-ops"],
+  "0.2.2-rc.1/runtime-context-reminders": ["dsh-host-ops"],
+  "0.2.2-rc.1/web-search-billing": ["dsh-host-ops"]
+}
