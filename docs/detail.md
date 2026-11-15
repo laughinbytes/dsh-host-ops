@@ -18,7 +18,8 @@ those controls, and puts a review step in front of the risky ones.
   then makes the change. You can undo it in the same session; every write also leaves a receipt
   with the original values (sensitive fields masked) and recovery steps, so you can restore
   manually if the plugin is reloaded.
-- **Secrets stay hidden**: keys and tokens are masked wherever values are shown.
+- **Secrets stay hidden**: keys and tokens are masked wherever values are shown, and the tool
+  refuses to write literal passwords/tokens — set those in Settings or credentials.
 - **Risky changes are flagged**: settings that DSH needs in order to start come with a warning
   and recovery steps.
 - **Nothing happens behind DSH's back**: every action goes through DSH's own services.

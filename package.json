@@ -1,6 +1,6 @@
 {
   "name": "dsh-host-ops",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Host-side operations for DSH agents: workspaces, sessions, and governed configuration changes. Tools only — no UI.",
   "license": "MIT",
   "author": "laughinbytes",

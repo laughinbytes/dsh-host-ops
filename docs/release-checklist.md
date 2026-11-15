@@ -7,7 +7,7 @@ not “done” until every gate is either green or explicitly waived here with a
 ## G0 · Code and manifest (every commit)
 
 - [ ] `npm test` passes:
-  - host logic `404/404`;
+  - host logic `413/413`;
   - schema `64/64` (needs the Desktop DSH app for `app.asar`);
   - compliance `A=0 B=0` (`--strict`; C-level findings are reviewed in
     [`development.md`](./development.md#compliance-gate));
@@ -73,7 +73,7 @@ When the supported DSH version changes:
 
 | Gate | Command / check | Result | Date |
 |---|---|---|---|
-| G0 | `npm test` | 404/404, 64/64, A=0/B=0/C=2, presentation OK, standards OK | |
+| G0 | `npm test` | 413/413, 64/64, A=0/B=0/C=2, presentation OK, standards OK | |
 | G1 | `npm pack` + clean install | 13 files, `node --check` OK | |
 | G1.5 | cold boot or N/A | | |
 | G2 | staging or N/A | | |

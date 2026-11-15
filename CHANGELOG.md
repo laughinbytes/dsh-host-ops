@@ -3,6 +3,29 @@
 All notable changes to `dsh-host-ops` are documented here. This project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] — 2026-11-15
+
+Behavior release: sensitive config writes are refused and read masking is unified. This is a
+runtime behavior change; publish only after G2 staging.
+
+### Changed
+
+- **Sensitive config writes are refused** — detection is schema-first: `meta.role: "secret"`
+  is sensitive regardless of the field name; `meta.role: "credential-ref"` (e.g. `apiKeyEnv`)
+  is explicitly a reference and stays allowed; a missing schema/role falls back to a narrow
+  field-name rule. The same resolver drives write blocking and display masking; value contents
+  are never inspected. Writes that add or change a sensitive value are rejected (including
+  inherited values a complete override would pin into the profile). `reset`/`revert` follow
+  the same rule; removing a secret or leaving it unchanged is allowed. Use
+  Settings/credentials or a `${credential:...}` reference instead. This is a deliberate
+  privacy/safety behavior change, not a bug fix.
+- **`get` masks sensitive values** — the read action now returns masked values for `effective`,
+  `override` and `inherited`, matching previews/receipts/audit/history. Raw secrets are no
+  longer echoed into a tool result.
+- **Optional-service policy documented** — the three required services stay in `inject`; the
+  other seven remain guarded `ctx.get` lookups so a reduced profile loses only the affected
+  action, not the whole plugin. Recorded as a reviewed exception in `docs/development.md`.
+
 ## [0.1.2] — 2026-11-15
 
 Patch release: **no runtime behavior change** (documentation, tool description, and the

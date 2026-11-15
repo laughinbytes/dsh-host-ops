@@ -57,7 +57,10 @@ dsh plugin --profile desktop add dsh-host-ops
 - **回滚**：按 `auditId` 做冲突检测回滚（仅当前运行期）；字段现状不一致时拒绝并列出冲突；
   重载后用收据或 `reset`；
 - **掩码**：敏感字段（key/token/secret/password/credential/env，含 `providers[].apiKey`
-  这类嵌套键）在预览/收据/审批/审计里统一掩码；
+  这类嵌套键）在预览/收据/审批/审计/get 里统一掩码；
+- **敏感写入会被拒绝**：schema 标了 `secret` 的字段，以及密码/token/apiKey 这类字段，新增或修改一律拒绝
+  （包括会把继承值固定到 profile 层的完整覆盖）；`apiKeyEnv` 这类 `credential-ref` 是引用，放行；
+  密钥请在 Settings/凭据里设置，或用 `${credential:...}` 引用；
 - **启动必需行**（`agent-loop`、`webserver`、`connection`、`modules` 等）会给出警告与
   应急恢复步骤；
 - 核心失败抛可行动错误；可选信息降级时明确告知；编程错误一律重新抛出
@@ -72,7 +75,7 @@ macOS Desktop 实测，其他平台未验证。审计是内存环形（最近 10
 ## 验证
 
 ```bash
-node scripts/verify-dsh-host-ops.mjs         # 逻辑验证（假 DSH 服务），404 项
+node scripts/verify-dsh-host-ops.mjs         # 逻辑验证（假 DSH 服务），413 项
 node scripts/verify-dsh-host-ops-schema.mjs  # schema 验证（真实 dsh-tools），64 项
 ```
 

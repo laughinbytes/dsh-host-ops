@@ -3,7 +3,7 @@
 ## Test suites
 
 ```bash
-node scripts/verify-dsh-host-ops.mjs         # logic suite (fake DSH services), 404 checks
+node scripts/verify-dsh-host-ops.mjs         # logic suite (fake DSH services), 413 checks
 node scripts/verify-dsh-host-ops-schema.mjs  # schema suite (real @deepseek-ai/dsh-tools), 64 checks
 ```
 
@@ -38,6 +38,24 @@ On a machine without a dsh-dev checkout (CI), it verifies the local lock only.
 Known advisory finding: the compliance checker reports two C-level `R-EVT-04` entries
 (`wait` and `notify` subscribe to `session/event` for one-shot side effects, not for derived
 state). A/B are the blocking levels; the C entries are reviewed and intentionally kept.
+
+## Reviewed policy decisions
+
+- **Optional services stay on `ctx.get`** — the plugin declares only `tools`,
+  `workspaceRegistry` and `sessionQuery` in `inject`; `sessionController`, `sessions`,
+  `agents`, `sessionTitle`, `sessionProjections`, `configEditor` and `approval` are looked up
+  with `ctx.get` and guarded at the call site. This keeps one missing service from disabling
+  every tool in a reduced profile; the official Host Service contract supports optional access
+  this way. This is a deliberate exception to the simplified "optional services go in
+  inject/ctx.inject" wording in `docs/11`; do not move them without testing a reduced profile.
+- **Sensitive detection is schema-first** — the same resolver is used for write blocking and
+  display masking. A schema `meta.role: "secret"` field is sensitive regardless of its name;
+  `meta.role: "credential-ref"` (e.g. `apiKeyEnv`) is explicitly not secret. When the schema
+  is missing or has no role, a narrow field-name rule (`apiKey`, `token`, `password`, …) is
+  the fallback. The tool never inspects value contents. Writes that add or change a sensitive
+  value are refused before preview/approval, including inherited values that a complete
+  override would pin into the profile; removing a secret or leaving it unchanged is allowed.
+  `get`, previews, receipts and audit mask the same paths.
 
 ## Repository layout
 

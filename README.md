@@ -69,7 +69,11 @@ on/off switch.
   mismatched current values refuse the revert and list the conflicts. After a reload, use
   the receipt or `reset`.
 - **Masking**: sensitive fields (key/token/secret/password/credential/env, including nested
-  keys such as `providers[].apiKey`) are masked in previews, receipts, approvals and history.
+  keys such as `providers[].apiKey`) are masked in previews, receipts, approvals, history and `get`.
+- **Sensitive writes are refused**: schema-marked `secret` fields and password/token/apiKey
+  names are rejected when added or changed (including inherited values a complete override
+  would pin into the profile); `credential-ref` fields (e.g. `apiKeyEnv`) are references and
+  stay allowed. Set secrets in Settings/credentials, or use a `${credential:...}` reference.
 - **Startup-required rows** (`agent-loop`, `webserver`, `connection`, `modules`, …) carry a
   warning with emergency recovery instructions.
 - Core failures throw actionable errors; optional enrichment degrades visibly; programming
@@ -86,7 +90,7 @@ bundles, edit agent presets, or write DSH storage files directly.
 ## Verify
 
 ```bash
-node scripts/verify-dsh-host-ops.mjs         # logic suite (fake DSH services), 404 checks
+node scripts/verify-dsh-host-ops.mjs         # logic suite (fake DSH services), 413 checks
 node scripts/verify-dsh-host-ops-schema.mjs  # schema suite (real @deepseek-ai/dsh-tools), 64 checks
 ```
 

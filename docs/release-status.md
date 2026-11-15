@@ -39,6 +39,38 @@
 - [ ] Rollback command if 0.1.2 misbehaves: remove `dsh-host-ops`, install
       `dsh-host-ops@0.1.0` via `plugin_manager`.
 
+## 0.2.0 (prepared, 2026-11-15)
+
+Policy decisions agreed with the user; not published yet.
+
+- [x] **Sensitive config writes refused**: schema-first detection (`meta.role: "secret"`),
+      `credential-ref` (e.g. `apiKeyEnv`) explicitly allowed, and a narrow field-name fallback
+      when the schema has no role. `set`/`reset`/`revert` reject additions/changes, including
+      inherited values pinned by a complete override; removal/unchanged values are allowed.
+- [x] **`get` masks sensitive values**: `effective`/`override`/`inherited` are masked by the
+      same schema+name resolver, so raw secrets no longer enter a tool result. The live
+      `cordis_inspect_query` schema exposes `x-cordis.role` (`secret` / `credential-ref`) and
+      the runtime schemastery schema exposes the same `meta.role` (verified on
+      `dsh-web-search-deepseek`).
+- [x] **Optional-service policy documented**: required services stay in `inject`; the other
+      seven remain guarded `ctx.get` lookups; recorded as a reviewed exception in
+      [`development.md`](./development.md#reviewed-policy-decisions).
+- [x] `npm test`: 413/413 logic, 64/64 schema, A=0/B=0/C=2, presentation/meta pass,
+      standards lock pass.
+- [x] Version bump: `0.2.0`; CHANGELOG/README/tool page updated; tarball
+      `dsh-host-ops-0.2.0.tgz` (13 files, 74 kB).
+- [x] G1: clean `npm install` of the 0.2.0 tarball in an empty directory; `node --check` OK.
+- [x] G2 (composition): installed the 0.2.0 tarball into an isolated staging profile
+      (`DSH_HOME=/tmp/host-ops-staging-home`, created from the shipped `web` template);
+      `dsh --profile staging --dump-config` shows the `host-ops` row and the profile registers
+      `dsh-host-ops` from the tarball. Full runtime core-flow was not executed in staging
+      because the isolated home has no model credentials.
+- [x] G1.5: **N/A** — no new plugin-written startup document; config writes still use the
+      official `configEditor.edit()`.
+- [x] G2.5: same DSH `0.2.2-rc.3`; the 0.2.2-rc.1 → rc.3 review/ack still applies.
+- [ ] Publish `--tag next`, promote `latest`, switch daily profile, and run the core-flow
+      dogfood. 2FA is required for publishing.
+
 ## Done
 
 - [x] Public name decided: `dsh-host-ops` (npm name available; checked 2026-11-09)

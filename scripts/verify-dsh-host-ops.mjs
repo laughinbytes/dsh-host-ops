@@ -575,7 +575,7 @@ function makeCtx(world, services = {}) {
     if (row.entry === undefined) {
       row.entry = {
         options: { id: row.id, name: row.name },
-        fiber: { state: 2, runtime: { Config: schemas[row.id] ?? { type: 'object', dict: {} } } },
+        fiber: { state: 2, runtime: { Config: schemas[row.id] ?? row.schema ?? { type: 'object', dict: {} } } },
       }
     }
   }
@@ -2077,13 +2077,46 @@ world.titles.set('s-degrade', '降级测试会话')
   check(takeWarnings().some((line) => line.includes('配置工具查活动会话失败')), '配置工具查询失败记录了预期 warn')
 }
 
-// G2. 启动必需行预警 + 收据掩码
-console.log('\n[配置] 危险行预警与收据掩码')
+// G2. 启动必需行预警 + 敏感字段写入拦截
+console.log('\n[配置] 危险行预警与敏感字段拦截')
 {
   const riskWorld = makeWorld()
+  const objectSchema = (dict) => ({ type: 'object', dict })
+  const functionSchema = (dict) => Object.assign(() => {}, objectSchema(dict))
   riskWorld.configRows = [
     { id: 'webserver', name: '@deepseek-ai/dsh-host-webserver', inherited: { port: 3080 }, override: {} },
-    { id: 'secrets-row', name: '@local/secrets', inherited: { apiKey: 'inherited-key', gamma: true }, override: {} },
+    {
+      id: 'secrets-row', name: '@local/secrets', inherited: { apiKey: 'inherited-key', gamma: true }, override: {},
+      schema: objectSchema({ apiKey: { meta: { role: 'secret' } }, gamma: {} }),
+    },
+    {
+      id: 'env-row', name: '@local/env-row', inherited: { apiKeyEnv: 'OPENROUTER_API_KEY', gamma: true }, override: {},
+      schema: objectSchema({ apiKeyEnv: { meta: { role: 'credential-ref' } }, gamma: {} }),
+    },
+    {
+      id: 'debug-env-row', name: '@local/debug-env', inherited: { env: { DEBUG: '1' }, gamma: true }, override: {},
+      schema: objectSchema({ env: { type: 'dict', inner: { type: 'string' } }, gamma: {} }),
+    },
+    {
+      id: 'token-env-row', name: '@local/token-env', inherited: { env: { GITHUB_TOKEN: 'ghp_x' }, gamma: true }, override: {},
+      schema: objectSchema({ env: { type: 'dict', inner: { type: 'string', meta: { role: 'secret' } } }, gamma: {} }),
+    },
+    {
+      id: 'schema-secret-row', name: '@local/schema-secret', inherited: { payload: 'old-secret', gamma: true }, override: {},
+      schema: functionSchema({ payload: { meta: { role: 'secret' } }, gamma: {} }),
+    },
+    {
+      id: 'ref-row', name: '@local/ref-row', inherited: { credential: 'REF_NAME', gamma: true }, override: {},
+      schema: objectSchema({ credential: { meta: { role: 'credential-ref' } }, gamma: {} }),
+    },
+    {
+      id: 'nested-schema-row', name: '@local/nested-schema',
+      inherited: { providers: [{ opaque: 'old', name: 'x' }], gamma: true }, override: {},
+      schema: objectSchema({
+        providers: { type: 'array', inner: objectSchema({ opaque: { meta: { role: 'secret' } }, name: {} }) },
+        gamma: {},
+      }),
+    },
   ]
   const riskCtx = makeCtx(riskWorld)
   await loadPlugin(riskCtx)
@@ -2098,16 +2131,37 @@ console.log('\n[配置] 危险行预警与收据掩码')
   check(riskApplied.message.includes('恢复：action=reset'), '收据给出恢复命令')
   check(riskApplied.message.includes('启动必需行'), '启动必需行写入成功也附应急恢复提示')
 
-  const secretPreview = await riskTool.execute({ action: 'set', entry: 'secrets-row', values: { apiKey: 'super-secret-123' } }, TEST_EXEC)
-  check(!secretPreview.message.includes('super-secret-123') && secretPreview.message.includes('***'),
-    '预览对敏感字段掩码（不打印明文密钥）', secretPreview.message.slice(0, 100))
-  const nestedPreview = await riskTool.execute({ action: 'set', entry: 'secrets-row', values: { providers: [{ apiKey: 'nested-secret-456' }] } }, TEST_EXEC)
-  check(!nestedPreview.message.includes('nested-secret-456'),
-    '字段名不敏感但值里嵌了密钥（providers[].apiKey）也会掩码', nestedPreview.message.slice(0, 120))
-  const secretToken = JSON.parse(secretPreview.data).previewToken
-  const secretApplied = await riskTool.execute({ action: 'set', entry: 'secrets-row', values: { apiKey: 'super-secret-123' }, apply: true, previewToken: secretToken }, TEST_EXEC)
-  check(!secretApplied.message.includes('super-secret-123'), '写入成功回执不打印明文密钥')
-  check(secretApplied.message.includes('敏感字段'), '收据提示敏感字段已掩码')
+  await checkThrows('直接写 apiKey 被拒', '拒绝写入敏感字段',
+    () => riskTool.execute({ action: 'set', entry: 'secrets-row', values: { apiKey: 'super-secret-123' } }, TEST_EXEC))
+  await checkThrows('嵌套 providers[].apiKey 被拒', '拒绝写入敏感字段',
+    () => riskTool.execute({ action: 'set', entry: 'secrets-row', values: { providers: [{ apiKey: 'nested-secret-456' }] } }, TEST_EXEC))
+  await checkThrows('改非敏感字段但会把继承的 apiKey 固定进 profile 也被拒', 'apiKey',
+    () => riskTool.execute({ action: 'set', entry: 'secrets-row', values: { gamma: false } }, TEST_EXEC))
+  await checkThrows('reset 会把继承的 apiKey 复制进 profile 时被拒', 'apiKey',
+    () => riskTool.execute({ action: 'reset', entry: 'secrets-row' }, TEST_EXEC))
+  const secretGet = await riskTool.execute({ action: 'get', entry: 'secrets-row' }, TEST_EXEC)
+  check(!secretGet.message.includes('inherited-key') && secretGet.message.includes('***'),
+    'get 对敏感字段掩码（不在工具输出里回显）')
+  await checkThrows('env 里的 token 也被拒', 'GITHUB_TOKEN',
+    () => riskTool.execute({ action: 'set', entry: 'token-env-row', values: { gamma: false } }, TEST_EXEC))
+
+  await checkThrows('schema 标了 secret、但字段名普通的写入也被拒', 'payload',
+    () => riskTool.execute({ action: 'set', entry: 'schema-secret-row', values: { payload: 'new-secret' } }, TEST_EXEC))
+  await checkThrows('schema 在嵌套数组里标了 secret 也会被拒', 'providers[0].opaque',
+    () => riskTool.execute({ action: 'set', entry: 'nested-schema-row', values: { providers: [{ opaque: 'new', name: 'x' }] } }, TEST_EXEC))
+  const refPreview = await riskTool.execute({ action: 'set', entry: 'ref-row', values: { gamma: false } }, TEST_EXEC)
+  check(refPreview.message.includes('【预览·未写入】'),
+    'schema 标了 credential-ref 的字段不会被字段名规则误拦')
+  const refGet = await riskTool.execute({ action: 'get', entry: 'ref-row' }, TEST_EXEC)
+  check(refGet.message.includes('REF_NAME'), 'credential-ref 不是密钥，get 不掩码')
+  const schemaSecretGet = await riskTool.execute({ action: 'get', entry: 'schema-secret-row' }, TEST_EXEC)
+  check(!schemaSecretGet.message.includes('old-secret') && schemaSecretGet.message.includes('***'),
+    'get 用 schema 的 secret 标记掩码（普通字段名也挡得住）')
+
+  const envPreview = await riskTool.execute({ action: 'set', entry: 'env-row', values: { gamma: false } }, TEST_EXEC)
+  check(envPreview.message.includes('【预览·未写入】'), 'apiKeyEnv 只是环境变量名，不按密钥拦截')
+  const debugPreview = await riskTool.execute({ action: 'set', entry: 'debug-env-row', values: { gamma: false } }, TEST_EXEC)
+  check(debugPreview.message.includes('【预览·未写入】'), 'env 里只有非敏感键时允许')
 }
 
 // G. 编程错误必须重新抛出（不允许被兜底吞掉）
