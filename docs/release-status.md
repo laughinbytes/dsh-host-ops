@@ -1,12 +1,11 @@
 # Release status (2026-11-09)
 
-> **2026-11-15 status:** npm `next` is **0.2.0** (published 19:16 local); `latest` is still
-> **0.1.2** until the dist-tag is promoted. The daily Desktop profile is on **0.2.0** and passed
-> the read/refusal dogfood. Git tag `v0.2.0` is pushed.
+> **2026-11-15 status:** npm `latest` and `next` are both **0.2.0**. The daily Desktop profile
+> is on 0.2.0 and passed the read/refusal dogfood. Git tag `v0.2.0` is pushed.
 
-## 0.2.0 (next published, 2026-11-15)
+## 0.2.0 (published, 2026-11-15)
 
-Behavior release published under `next`; `latest` promotion pending.
+Behavior release: sensitive config writes are refused and read masking is unified.
 
 - [x] **Sensitive config writes refused**: schema-first detection (`meta.role: "secret"`),
       `credential-ref` (e.g. `apiKeyEnv`) explicitly allowed, and a narrow field-name fallback
@@ -41,7 +40,8 @@ Behavior release published under `next`; `latest` promotion pending.
       refused with `拒绝写入敏感字段：apiKey`; `set apiKeyEnv` previews normally; a normal
       `host-ops` preview still works. No `apply: true` was used.
 - [x] Git tag `v0.2.0` on `13cd3be`, pushed.
-- [ ] Promote `latest`: `npm dist-tag add dsh-host-ops@0.2.0 latest` (2FA).
+- [x] Promote `latest`: registry reports `latest` and `next` = 0.2.0; clean
+      `npm install dsh-host-ops@latest` resolves 0.2.0.
 
 ## 0.1.2 (published, 2026-11-15)
 
