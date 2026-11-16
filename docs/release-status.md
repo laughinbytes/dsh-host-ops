@@ -1,9 +1,9 @@
 # Release status (2026-11-09)
 
-> **2026-11-15 status:** npm `latest` and `next` are both **0.2.0**. The daily Desktop profile
-> is on 0.2.0 and passed the read/refusal dogfood. Git tag `v0.2.0` is pushed.
+> **2026-11-16 status:** npm `latest` and `next` are both **0.2.1**. The daily Desktop profile
+> is on 0.2.1. Git tag `v0.2.1` is pushed and the GitHub Release is published.
 
-## 0.2.1 (prepared, 2026-11-16)
+## 0.2.1 (published, 2026-11-16)
 
 Tooling/packaging patch; no runtime behavior change.
 
@@ -20,7 +20,12 @@ Tooling/packaging patch; no runtime behavior change.
 - [x] G2: **waived** for this tooling-only patch (no runtime or packaged behavior change;
       `lib/index.js` unchanged). Do not reuse this waiver for a functional release.
 - [x] G2.5: same DSH `0.2.2-rc.3`; previous review/ack applies.
-- [ ] Publish `--tag next`, promote `latest`, create GitHub Release `v0.2.1`.
+- [x] Publish: `dsh-host-ops@0.2.1`, `latest` and `next` both point at it.
+      Integrity `sha512-YJTLOawYxeqVc/mrQ6u83d1cAPFpLrcR9Gfn6BaIPNnQU6AL37qAbahM7L+1D9aFJOLFzsP3/5m2cKQJnm4lhw==`.
+- [x] Registry install: clean `npm install dsh-host-ops@0.2.1`; version and `node --check` OK.
+- [x] Daily profile: 0.2.0 → 0.2.1 via `plugin_manager`; profile dependency is 0.2.1.
+- [x] Git tag `v0.2.1` pushed; GitHub Release `v0.2.1` published at
+      https://github.com/laughinbytes/dsh-host-ops/releases/tag/v0.2.1.
 - [x] Standards gate: `npm test` verifies the local lock; upstream review is the explicit
       `check:standards:upstream` command. `verify-plugin-meta.mjs` remains pinned to `8f01fdb`.
 
