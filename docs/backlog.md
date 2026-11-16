@@ -64,3 +64,19 @@
 ## B5. headless 边界说明
 
 - 发布 README 里补一段：没有审批回答者的部署（headless/无人值守）写入会 fail-closed 被拒绝；只读动作可用；要写入需部署侧配置审批回答者（含机器自动审查）。
+
+## B6. 只读 `presets` 动作：让公共插件自适应部署 roster（计划：下一版）
+
+- **背景**：`dsh_session_manage.start` 的 `agentPreset` 描述硬编码了官方四个 preset 的一句话说明。
+  DSH 0.2.2-rc.3 起部分事实已过时（`standard` 在桌面 profile 下也启用 `plugin_manager`、也有
+  `customSkillDirs`；`cordis` 的独有项只剩 `cordis_inspect`），而且部署私有 preset 无法出现在
+  公共插件的描述里。
+- **决定**：公共插件不写任何部署私有的 preset 名，改为提供一个只读动作 `action=presets`
+  返回当前部署的 roster：`id` / `name` / `description` / `order` / `broken?`（来源 `agentPresets`
+  服务）；工具描述改成可移植的选型原则（省略 `agentPreset` = 部署默认；只有任务明确需要不同
+  执行模型时才显式选；选前先查 `presets`）。
+- **收益**：同一个公共包对所有部署成立；每个部署的私有 preset 靠自身的 `name`/`description`
+  被 agent 发现，不再需要把本机名字写进公共文案。
+- **注意**：动作只读、不需要审批；`description` 可能较长或含第三方文本，返回要截断并注明来源；
+  roster 变化（装/卸 preset bundle）要在下一次调用反映，不能缓存到进程生命周期。
+- **状态**：用户 2026-11-16 同意；计划随下一次发版（0.2.2 或 0.3.0）加入，当前补丁不做。
