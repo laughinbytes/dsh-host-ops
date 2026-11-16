@@ -93,6 +93,25 @@ function readDshVersion(source) {
   return match === null ? null : match[1].trim()
 }
 
+/**
+ * Whether the source checkout has uncommitted changes. A dirty standards checkout is not a
+ * stable upstream: another workspace may be mid-edit. In that case verify the local lock only
+ * and leave the upstream review for when the checkout is clean.
+ * @param source - dsh-dev directory.
+ * @returns true when `git status --porcelain` is non-empty.
+ */
+function isDirtyCheckout(source) {
+  try {
+    const output = execFileSync('git', ['-C', source, 'status', '--porcelain'], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim()
+    return output !== ''
+  } catch {
+    return false
+  }
+}
+
 function main() {
   const options = parseArgs(process.argv.slice(2))
   if (options.help) {
@@ -122,6 +141,9 @@ function main() {
   // Layer 2: upstream drift alarm (local development only).
   const source = path.resolve(options.source ?? process.env.DSH_DEV_DIR ?? DEFAULT_SOURCE)
   if (!options.local && fs.existsSync(source) && fs.statSync(source).isDirectory()) {
+    if (isDirtyCheckout(source)) {
+      console.log('note: dsh-dev worktree has uncommitted changes; skipped upstream comparison (local lock verified)')
+    } else {
     for (const [rel, expected] of Object.entries(lock.files)) {
       const file = path.join(source, rel)
       if (!fs.existsSync(file)) {
@@ -139,6 +161,7 @@ function main() {
     const head = gitHead(source)
     if (head && lock.source?.commit && head !== lock.source.commit) {
       console.log(`note: dsh-dev HEAD moved (${lock.source.commit.slice(0, 7)} → ${head.slice(0, 7)}); vendored files are compared above`)
+    }
     }
   } else if (!options.local) {
     console.log('note: dsh-dev checkout not found; verified the local lock only')

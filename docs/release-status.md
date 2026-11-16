@@ -3,6 +3,27 @@
 > **2026-11-15 status:** npm `latest` and `next` are both **0.2.0**. The daily Desktop profile
 > is on 0.2.0 and passed the read/refusal dogfood. Git tag `v0.2.0` is pushed.
 
+## 0.2.1 (prepared, 2026-11-16)
+
+Tooling/packaging patch; no runtime behavior change.
+
+- [x] Presentation identity is repo-owned: `scripts/verify-presentation.mjs` checks
+      package/locale/icon/detail; the vendored dsh-dev `audit-plugin-presentation.mjs` and its
+      canonical dependency are gone. `test:presentation` = local check + generic
+      `verify-plugin-meta.mjs`.
+- [x] Standards lock pinned to dsh-dev `8f01fdb`; only the generic compliance/meta checkers are
+      vendored (4 files).
+- [x] `npm test`: 413/413 logic, 64/64 schema, A=0/B=0/C=2, local presentation check,
+      official meta check, standards lock.
+- [x] G1: tarball (`dsh-host-ops-0.2.1.tgz`, 13 files) clean-installed; `node --check` OK.
+- [x] G1.5: **N/A** — no runtime/persistent-write change.
+- [x] G2: **waived** for this tooling-only patch (no runtime or packaged behavior change;
+      `lib/index.js` unchanged). Do not reuse this waiver for a functional release.
+- [x] G2.5: same DSH `0.2.2-rc.3`; previous review/ack applies.
+- [ ] Publish `--tag next`, promote `latest`, create GitHub Release `v0.2.1`.
+- [x] Standards gate: `npm test` verifies the local lock; upstream review is the explicit
+      `check:standards:upstream` command. `verify-plugin-meta.mjs` remains pinned to `8f01fdb`.
+
 ## 0.2.0 (published, 2026-11-15)
 
 Behavior release: sensitive config writes are refused and read masking is unified.

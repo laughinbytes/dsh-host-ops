@@ -1,6 +1,6 @@
 {
   "name": "dsh-host-ops",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Host-side operations for DSH agents: workspaces, sessions, and governed configuration changes. Tools only — no UI.",
   "license": "MIT",
   "author": "laughinbytes",
@@ -30,8 +30,9 @@
     "test:compliance": "node scripts/check-plugin-compliance.mjs --root . --strict",
     "test:host": "node scripts/verify-dsh-host-ops.mjs && node scripts/verify-dsh-host-ops-schema.mjs",
     "test:presentation": "node scripts/verify-presentation.mjs && node scripts/verify-plugin-meta.mjs --root .",
-    "check:standards": "node scripts/check-standards.mjs",
-    "sync:standards": "node scripts/sync-standards.mjs"
+    "check:standards": "node scripts/check-standards.mjs --local",
+    "sync:standards": "node scripts/sync-standards.mjs",
+    "check:standards:upstream": "node scripts/check-standards.mjs"
   },
   "exports": {
     ".": "./lib/index.js",

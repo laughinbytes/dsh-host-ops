@@ -3,7 +3,10 @@
 All notable changes to `dsh-host-ops` are documented here. This project follows
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.2.1] — 2026-11-16
+
+Tooling/packaging release: **no runtime behavior change**. Only the repository's presentation
+check and development scripts changed; `lib/index.js` is unchanged.
 
 ### Changed
 
@@ -12,6 +15,10 @@ All notable changes to `dsh-host-ops` are documented here. This project follows
   `scripts/verify-presentation.mjs` and kept the generic `verify-plugin-meta.mjs`. `npm test`
   now checks this repository's own package/locale/icon/detail identity. dsh-dev no longer
   registers this independently published repo in its canonical table.
+- **Standards are pinned, not chased** — `npm test` verifies the local lock only
+  (`check-standards.mjs --local`); `npm run check:standards:upstream` is the explicit review
+  step. The vendored `verify-plugin-meta.mjs` stays pinned to dsh-dev `8f01fdb` because later
+  dsh-dev revisions make it workspace-specific (`scripts/registry.json`).
 
 ## [0.2.0] — 2026-11-15
 

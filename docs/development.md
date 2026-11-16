@@ -37,8 +37,14 @@ git diff scripts/         # review what changed
 npm test                  # re-run everything
 ```
 
-`check-standards.mjs` fails until that sync happens; do not edit the vendored checkers by hand.
-On a machine without a dsh-dev checkout (CI), it verifies the local lock only.
+`npm test` verifies the **local lock only** (`check-standards.mjs --local`), so unrelated work in
+the dsh-dev checkout cannot turn this repository red. Upstream review is explicit:
+`npm run check:standards:upstream` compares the lock with dsh-dev; `npm run sync:standards`
+updates the vendored copies only after that review. Do not edit the vendored checkers by hand.
+
+The vendored `verify-plugin-meta.mjs` is pinned to dsh-dev `8f01fdb`. Later dsh-dev revisions
+may make it workspace-specific (the 2026-11-16 revision started reading a generated
+`scripts/registry.json`), so do **not** sync it blindly; adapt or freeze it deliberately.
 
 Known advisory finding: the compliance checker reports two C-level `R-EVT-04` entries
 (`wait` and `notify` subscribe to `session/event` for one-shot side effects, not for derived
